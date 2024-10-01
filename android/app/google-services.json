@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "786983120430",
+    "project_id": "queme-app-3e7ae",
+    "storage_bucket": "queme-app-3e7ae.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:786983120430:android:f4488e4e6cd9921779f9bf",
+        "android_client_info": {
+          "package_name": "com.example.queme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "786983120430-4k4gevkled5fns7963vcb01ifeu453mt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.queme",
+            "certificate_hash": "6378c9118d82e889811a585deeb506b6b9fcebc8"
+          }
+        },
+        {
+          "client_id": "786983120430-ntarcuh6m36f2gum64ucpubaevciqq75.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChbAhuL9fXJpVF417-dZurkWDCF2LCBgE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "786983120430-ntarcuh6m36f2gum64ucpubaevciqq75.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "786983120430-cur0mtvf8v02ncsm8kpllqu19pub8isq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.queme"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

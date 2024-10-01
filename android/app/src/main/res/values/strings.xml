@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Facebook App ID -->
+    <string name="facebook_app_id">523310903547317</string>
+
+    <!-- Facebook Client Token (Replace this with the actual client token from the Facebook Developer Console) -->
+    <string name="facebook_client_token">efca96248742b6ec9b7c4a7b5f12c120</string>
+
+    <!-- Facebook OAuth Scheme -->
+    <string name="fb_login_protocol_scheme">fb523310903547317</string>
+</resources>
