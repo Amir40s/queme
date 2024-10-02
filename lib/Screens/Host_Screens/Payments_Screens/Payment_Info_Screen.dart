@@ -10,7 +10,7 @@ import 'package:queme/Widgets/round_button.dart';
 import 'Payment_Successful_Screen.dart';
 
 class PaymentInfoScreen extends StatefulWidget {
-   const PaymentInfoScreen({super.key});
+  const PaymentInfoScreen({super.key});
 
   @override
   State<PaymentInfoScreen> createState() => _PaymentInfoScreenState();
@@ -21,14 +21,15 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
   TextEditingController cardController = TextEditingController();
   TextEditingController expiryDateController = TextEditingController();
   TextEditingController cvvController = TextEditingController();
-  TextEditingController countryController = TextEditingController(text: 'Pakistan');
+  TextEditingController countryController =
+      TextEditingController(text: 'Pakistan');
 
   bool agreeTerms = false;
   bool saveCardInfo = false;
 
   final DatabaseReference _database = FirebaseDatabase.instanceFor(
-      app: Firebase.app(), // Make sure Firebase is initialized
-      databaseURL: 'https://queme-app-3e7ae-default-rtdb.asia-southeast1.firebasedatabase.app/')
+          app: Firebase.app(), // Make sure Firebase is initialized
+          databaseURL: 'https://queme-f9d7f-default-rtdb.firebaseio.com/')
       .ref();
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -39,7 +40,7 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding:  EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
             child: Column(
               children: [
                 // Heading and Back Button
@@ -55,7 +56,7 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
                         ),
                         elevation: 3,
                         child: Padding(
-                          padding:  EdgeInsets.all(15.0.h),
+                          padding: EdgeInsets.all(15.0.h),
                           child: SvgPicture.asset(
                             'assets/images/back_arrow.svg',
                             height: 24.h,
@@ -64,7 +65,7 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
                         ),
                       ),
                     ),
-                     SizedBox(width: 20.w),
+                    SizedBox(width: 20.w),
                     Text(
                       "Payment Information",
                       style: TextStyle(
@@ -76,35 +77,39 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 15.h,),
+                SizedBox(
+                  height: 15.h,
+                ),
                 Image.asset(
                   "assets/images/credit_card.png",
                   height: 200.h,
                   width: 342.w,
                 ),
-                 SizedBox(height: 15.h),
+                SizedBox(height: 15.h),
 
                 // Card Holder Name Field
-                _buildTextField("Card Holder Name", nameController, "e.g. Mehtab"),
-                 SizedBox(height: 10.h),
+                _buildTextField(
+                    "Card Holder Name", nameController, "e.g. Mehtab"),
+                SizedBox(height: 10.h),
 
                 // Card Number Field
                 _buildCardNumberField(),
-                 SizedBox(height: 10.h),
+                SizedBox(height: 10.h),
 
                 // Expiry Date and CVV
                 Row(
                   children: [
                     Expanded(
-                      child: _buildTextField("Exp Date", expiryDateController, "MM/YY"),
+                      child: _buildTextField(
+                          "Exp Date", expiryDateController, "MM/YY"),
                     ),
-                     SizedBox(width: 10.w),
+                    SizedBox(width: 10.w),
                     Expanded(
                       child: _buildTextField("CVV Code", cvvController, "123"),
                     ),
                   ],
                 ),
-                 SizedBox(height: 10.h),
+                SizedBox(height: 10.h),
 
                 // Country Field
                 _buildTextField("Country", countryController, "Country"),
@@ -114,10 +119,12 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
                 RoundButton(
                   title: "Pay Now",
                   onPress: () async {
-                    await _saveCardInfoToFirebase();  // Call to save card info
+                    await _saveCardInfoToFirebase(); // Call to save card info
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) =>  const PaymentSuccessfulScreen()),
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const PaymentSuccessfulScreen()),
                     );
                   },
                 ),
@@ -130,21 +137,24 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
   }
 
   // Method to Build Standard TextFields
-  Widget _buildTextField(String label, TextEditingController controller, String hintText) {
+  Widget _buildTextField(
+      String label, TextEditingController controller, String hintText) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style:  TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
         ),
-        SizedBox(height: 5.h,),
+        SizedBox(
+          height: 5.h,
+        ),
         TextFormField(
           controller: controller,
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: TextStyle(fontSize: 14.sp),
-            border:  const OutlineInputBorder(),
+            border: const OutlineInputBorder(),
           ),
         ),
       ],
@@ -156,10 +166,11 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-         Text("Card Number", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp)),
+        Text("Card Number",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp)),
         TextFormField(
           controller: cardController,
-          decoration:  const InputDecoration(
+          decoration: const InputDecoration(
             hintText: "************1234",
             border: OutlineInputBorder(),
           ),
@@ -183,7 +194,10 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
               },
               activeColor: Colors.red,
             ),
-            Text("I agree to the terms and Conditions", style: TextStyle(fontSize: 16.sp,)),
+            Text("I agree to the terms and Conditions",
+                style: TextStyle(
+                  fontSize: 16.sp,
+                )),
           ],
         ),
         Row(
@@ -207,11 +221,12 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
   Future<void> _saveCardInfoToFirebase() async {
     String cardNumber = cardController.text;
 
-    User? currentUser = _auth.currentUser;  // Get the current user
+    User? currentUser = _auth.currentUser; // Get the current user
 
     if (currentUser != null && cardNumber.isNotEmpty) {
       String uid = currentUser.uid; // Get the UID of the current user
-      String maskedCardNumber = "************${cardNumber.substring(cardNumber.length - 4)}";
+      String maskedCardNumber =
+          "************${cardNumber.substring(cardNumber.length - 4)}";
 
       print("UID: $uid");
       print("Masked Card Number: $maskedCardNumber");
@@ -225,14 +240,15 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
         'country': countryController.text,
       }).then((_) {
         print("Card information saved successfully.");
-      Utils.toastMessage("Card information saved successfully", Colors.green);
+        Utils.toastMessage("Card information saved successfully", Colors.green);
       }).catchError((error) {
         print("Failed to save card info: $error");
-       Utils.toastMessage(error.toString(), Colors.red);
+        Utils.toastMessage(error.toString(), Colors.red);
       });
     } else {
       print("Invalid card number or user is not logged in.");
-     Utils.toastMessage("Invalid card number or user is not logged in", Colors.red);
+      Utils.toastMessage(
+          "Invalid card number or user is not logged in", Colors.red);
     }
   }
 }

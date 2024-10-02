@@ -2,26 +2,28 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../Auth/Login_Screen.dart';
-import 'Events_Screen/Events_Screen.dart';
-import 'Home_Screen/Home_Screen.dart';
-import 'Profile_Screen/Profile_Screen.dart'; // Assuming you have the LoginScreen
+
+import '../../Partcipants_Screens/Events_Screen/Events_Screen.dart';
+import '../../Partcipants_Screens/Home_Screen/Home_Screen.dart';
+import '../../Partcipants_Screens/Profile_Screen/Profile_Screen.dart';
+import '../Payments_Screens/Payment_Plans_Screen.dart';
+import 'Host_Dashboard.dart';
 
 // Main Participant Bottom Navigation Bar screen
-class ParticipentBottomNav extends StatefulWidget {
-  const ParticipentBottomNav({super.key});
+class HostBottomNav extends StatefulWidget {
+  const HostBottomNav({super.key});
 
   @override
-  State<ParticipentBottomNav> createState() => _ParticipentBottomNavState();
+  State<HostBottomNav> createState() => _HostBottomNavState();
 }
 
-class _ParticipentBottomNavState extends State<ParticipentBottomNav> {
+class _HostBottomNavState extends State<HostBottomNav> {
   int _selectedIndex = 0; // Index to track the selected tab
 
   // List of widgets to navigate between different tabs
   static final List<Widget> _screens = <Widget>[
-    const HomeScreen(),
-    EventsScreen(),
+    const HostDashboard(),
+    const PaymentPlansScreen(),
     const ProfileScreen(),
   ];
 
@@ -43,11 +45,13 @@ class _ParticipentBottomNavState extends State<ParticipentBottomNav> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Center(
-              child: SvgPicture.asset(
-                assetPath,
-                height: 24.h, // Adjust the icon size if necessary
-                width: 24.w,
-                color: Colors.red, // Change color based on selected state
+              child: SizedBox(
+                child: SvgPicture.asset(
+                  assetPath,
+                  height: 24.h, // Adjust the icon size if necessary
+                  width: 24.w,
+                  color: Colors.red, // Change color based on selected state
+                ),
               ),
             ),
           )
@@ -76,9 +80,9 @@ class _ParticipentBottomNavState extends State<ParticipentBottomNav> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: _getIcon('assets/images/events.svg',
+            icon: _getIcon('assets/images/plans.svg',
                 _selectedIndex == 1), // Check if Events is selected
-            label: 'Events',
+            label: 'Plans',
           ),
           BottomNavigationBarItem(
             icon: _getIcon('assets/images/profile.svg',

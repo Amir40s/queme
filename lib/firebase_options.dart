@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -50,19 +41,49 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyChbAhuL9fXJpVF417-dZurkWDCF2LCBgE',
-    appId: '1:786983120430:android:f4488e4e6cd9921779f9bf',
-    messagingSenderId: '786983120430',
-    projectId: 'queme-app-3e7ae',
-    storageBucket: 'queme-app-3e7ae.appspot.com',
+    apiKey: 'AIzaSyBZxlmPyiYHtkDjWeHPbWfjG5cgZd9_pN4',
+    appId: '1:208006271869:android:35517675edc0bb554d3214',
+    messagingSenderId: '208006271869',
+    projectId: 'queme-f9d7f',
+    storageBucket: 'queme-f9d7f.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDA_QPpj_wwFeZNkQie9iFAXEcTAKBHZjo',
-    appId: '1:786983120430:ios:839ecd41b739137279f9bf',
-    messagingSenderId: '786983120430',
-    projectId: 'queme-app-3e7ae',
-    storageBucket: 'queme-app-3e7ae.appspot.com',
+    apiKey: 'AIzaSyAGTv86hSOfAbBMQ3k1-pB8aszls1YYdlQ',
+    appId: '1:208006271869:ios:7d896fed823795cd4d3214',
+    messagingSenderId: '208006271869',
+    projectId: 'queme-f9d7f',
+    storageBucket: 'queme-f9d7f.appspot.com',
     iosBundleId: 'com.example.queme',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyA3EuUd0ADNha38CKeZVQ_KTFVkx2iYmzk',
+    appId: '1:208006271869:web:20336fa6aef166d64d3214',
+    messagingSenderId: '208006271869',
+    projectId: 'queme-f9d7f',
+    authDomain: 'queme-f9d7f.firebaseapp.com',
+    storageBucket: 'queme-f9d7f.appspot.com',
+    measurementId: 'G-5MQHXNBP9L',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyAGTv86hSOfAbBMQ3k1-pB8aszls1YYdlQ',
+    appId: '1:208006271869:ios:7d896fed823795cd4d3214',
+    messagingSenderId: '208006271869',
+    projectId: 'queme-f9d7f',
+    storageBucket: 'queme-f9d7f.appspot.com',
+    iosBundleId: 'com.example.queme',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyA3EuUd0ADNha38CKeZVQ_KTFVkx2iYmzk',
+    appId: '1:208006271869:web:f7c3b97bd233ddc74d3214',
+    messagingSenderId: '208006271869',
+    projectId: 'queme-f9d7f',
+    authDomain: 'queme-f9d7f.firebaseapp.com',
+    storageBucket: 'queme-f9d7f.appspot.com',
+    measurementId: 'G-WJ4ZQMEN5Q',
+  );
+
 }

@@ -30,13 +30,11 @@ class HostRunsScreen extends StatefulWidget {
 
 class _HostRunsScreenState extends State<HostRunsScreen>
     with SingleTickerProviderStateMixin {
-
-
   late TabController _tabController;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final DatabaseReference _database = FirebaseDatabase.instanceFor(
     app: Firebase.app(),
-    databaseURL: 'https://queme-app-3e7ae-default-rtdb.asia-southeast1.firebasedatabase.app/',
+    databaseURL: 'https://queme-f9d7f-default-rtdb.firebaseio.com/',
   ).ref();
 
   @override
@@ -166,16 +164,17 @@ class _HostRunsScreenState extends State<HostRunsScreen>
               children: [
                 Center(
                     child: Text(
-                      "No Dogs Running",
-                      style: TextStyle(fontSize: 16.sp),
-                    )),
+                  "No Dogs Running",
+                  style: TextStyle(fontSize: 16.sp),
+                )),
                 Positioned(
                   bottom: 30.h,
                   left: 0,
                   right: 0,
                   child: ExcelButton(
                     title: "Add Excel File",
-                    onPress: _pickAndUploadExcel, // Call the function on button press
+                    onPress:
+                        _pickAndUploadExcel, // Call the function on button press
                   ),
                 ),
               ],
@@ -183,9 +182,9 @@ class _HostRunsScreenState extends State<HostRunsScreen>
             // Completed Dogs Tab Content
             Center(
                 child: Text(
-                  "Dogs Completed List",
-                  style: TextStyle(fontSize: 16.sp),
-                )),
+              "Dogs Completed List",
+              style: TextStyle(fontSize: 16.sp),
+            )),
           ],
         ),
       ),

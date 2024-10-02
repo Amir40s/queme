@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:queme/Screens/Host_Screens/Host_Dashboard/host_bottom_nav.dart';
 import '../Host_Screens/Host_Dashboard/Host_Dashboard.dart';
 import 'Login_Screen.dart';
 import '../Partcipants_Screens/Participent_BottomNav.dart';
@@ -18,7 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
   // Firebase Database reference
   final DatabaseReference _database = FirebaseDatabase.instanceFor(
     app: Firebase.app(), // Use the already initialized Firebase app
-    databaseURL: 'https://queme-app-3e7ae-default-rtdb.asia-southeast1.firebasedatabase.app/',
+    databaseURL: 'https://queme-f9d7f-default-rtdb.firebaseio.com/',
   ).ref();
 
   @override
@@ -35,24 +36,27 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (currentUser != null) {
       // User is logged in, now fetch user data from Firebase Realtime Database
-      DatabaseReference userRef = _database.child('Users').child(currentUser.uid);
+      DatabaseReference userRef =
+          _database.child('Users').child(currentUser.uid);
       DataSnapshot snapshot = await userRef.get();
 
       if (snapshot.exists && snapshot.value != null) {
-        Map<dynamic, dynamic> userData = snapshot.value as Map<dynamic, dynamic>;
-        String userType = userData['userType'] ?? 'Participant'; // Default to 'Participant'
-        String paymentStatus = userData['paymentok'] ?? 'pending'; // Default to 'pending'
-
-        // Navigate based on userType and paymentok status
+        Map<dynamic, dynamic> userData =
+            snapshot.value as Map<dynamic, dynamic>;
+        String userType =
+            userData['userType'] ?? 'Participant'; // Default to 'Participant'
+        String paymentStatus =
+            userData['paymentok'] ?? 'pending'; // Default to 'pending'
         if (userType == 'Host' && paymentStatus == 'approved') {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const HostDashboard()),
+            MaterialPageRoute(builder: (context) => const HostBottomNav()),
           );
         } else if (userType == 'Participant') {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const ParticipentBottomNav()),
+            MaterialPageRoute(
+                builder: (context) => const ParticipentBottomNav()),
           );
         } else {
           // Handle unknown user type or pending payment

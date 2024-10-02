@@ -15,7 +15,7 @@ class PurchasePlanScreen extends StatefulWidget {
   final String planDescription;
   final int planAmount;
 
-   PurchasePlanScreen({
+  PurchasePlanScreen({
     Key? key,
     required this.planTitle,
     required this.planDescription,
@@ -27,13 +27,14 @@ class PurchasePlanScreen extends StatefulWidget {
 }
 
 class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
-  String? _selectedPaymentMethod = 'Paypal'; // Initially selected payment method
+  String? _selectedPaymentMethod =
+      'Paypal'; // Initially selected payment method
   String? userCardNumber; // Will store the masked card number
 
   // Firebase Database reference
   final DatabaseReference _database = FirebaseDatabase.instanceFor(
-      app: Firebase.app(), // Make sure Firebase is initialized
-      databaseURL: 'https://queme-app-3e7ae-default-rtdb.asia-southeast1.firebasedatabase.app/')
+          app: Firebase.app(), // Make sure Firebase is initialized
+          databaseURL: 'https://queme-f9d7f-default-rtdb.firebaseio.com/')
       .ref();
 
   @override
@@ -45,7 +46,8 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
   Future<void> _loadUserCardInfo() async {
     User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
-      DatabaseReference userRef = _database.child(currentUser.uid).child('cardInfo');
+      DatabaseReference userRef =
+          _database.child(currentUser.uid).child('cardInfo');
       DataSnapshot snapshot = await userRef.get();
 
       if (snapshot.exists) {
@@ -63,7 +65,7 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding:  EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
             child: Column(
               children: [
                 // Back Button and Heading
@@ -79,7 +81,7 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
                         ),
                         elevation: 3,
                         child: Padding(
-                          padding:  EdgeInsets.all(15.0.h),
+                          padding: EdgeInsets.all(15.0.h),
                           child: SvgPicture.asset(
                             'assets/images/back_arrow.svg',
                             height: 30,
@@ -88,8 +90,8 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
                         ),
                       ),
                     ),
-                     SizedBox(width: 20.w),
-                     Text(
+                    SizedBox(width: 20.w),
+                    Text(
                       "Purchase Plan",
                       style: TextStyle(
                         color: Colors.black,
@@ -103,25 +105,34 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
                 // Plan Details Container
                 _buildPlanDetails(),
 
-                 SizedBox(height: 20.h),
-                 Align(
+                SizedBox(height: 20.h),
+                Align(
                   alignment: Alignment.centerLeft,
-                  child: Text("Payment Method", style: TextStyle(fontFamily: "Poppins", fontSize: 20.sp, fontWeight: FontWeight.w600)),
+                  child: Text("Payment Method",
+                      style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w600)),
                 ),
-                 SizedBox(height: 20.h),
+                SizedBox(height: 20.h),
                 _buildPaymentMethods(),
 
-                 SizedBox(height: 20.h),
+                SizedBox(height: 20.h),
 
                 // Display Add Card or Card Info
-                userCardNumber == null ? _buildAddCardContainer() : _buildCardInfo(),
+                userCardNumber == null
+                    ? _buildAddCardContainer()
+                    : _buildCardInfo(),
 
-                 SizedBox(height: 50.h),
+                SizedBox(height: 50.h),
                 RoundButton(
                   title: "Confirm Purchase",
                   onPress: () {
-                    _confirmPurchase();  // Update Firebase with selected method
-                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  PaymentSuccessfulScreen()));
+                    _confirmPurchase(); // Update Firebase with selected method
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PaymentSuccessfulScreen()));
                   },
                 ),
               ],
@@ -135,47 +146,77 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
   // Method to Display Plan Details
   Widget _buildPlanDetails() {
     return Padding(
-      padding:  EdgeInsets.symmetric(vertical: 20.h),
+      padding: EdgeInsets.symmetric(vertical: 20.h),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           color: Colors.grey.shade300,
         ),
         child: Padding(
-          padding:  EdgeInsets.symmetric(horizontal: 25.w, vertical: 10.h),
+          padding: EdgeInsets.symmetric(horizontal: 25.w, vertical: 10.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(widget.planTitle, style:  TextStyle(fontWeight: FontWeight.bold, fontFamily: "Poppins", fontSize: 24.sp
-              )),
-               SizedBox(height: 10.h),
-              Text(widget.planDescription, style:  TextStyle(fontFamily: "Poppins", fontSize: 16.sp, fontWeight: FontWeight.bold)),
-               SizedBox(height: 10.h),
+              Text(widget.planTitle,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "Poppins",
+                      fontSize: 24.sp)),
+              SizedBox(height: 10.h),
+              Text(widget.planDescription,
+                  style: TextStyle(
+                      fontFamily: "Poppins",
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold)),
+              SizedBox(height: 10.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                   Text("Registration Fee", style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Poppins", fontSize: 16.sp
-                   )),
-                  Text("\$${widget.planAmount}", style:  TextStyle(fontFamily: "Poppins", fontSize: 16.sp, color: AppColors.buttonColor, fontWeight: FontWeight.bold)),
+                  Text("Registration Fee",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Poppins",
+                          fontSize: 16.sp)),
+                  Text("\$${widget.planAmount}",
+                      style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontSize: 16.sp,
+                          color: AppColors.buttonColor,
+                          fontWeight: FontWeight.bold)),
                 ],
               ),
-               SizedBox(height: 10.h),
-               Row(
+              SizedBox(height: 10.h),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Service Fee", style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Poppins", fontSize: 16.sp
-                  )),
-                  Text("\$20", style: TextStyle(fontFamily: "Poppins", fontSize: 16.sp
-                      , color: AppColors.buttonColor, fontWeight: FontWeight.bold)),
+                  Text("Service Fee",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Poppins",
+                          fontSize: 16.sp)),
+                  Text("\$20",
+                      style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontSize: 16.sp,
+                          color: AppColors.buttonColor,
+                          fontWeight: FontWeight.bold)),
                 ],
               ),
-               SizedBox(height: 10.h),
-               Row(
+              SizedBox(height: 10.h),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Discount", style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Poppins", fontSize: 16.sp
-                  )),
-                  Text("\$10", style: TextStyle(fontFamily: "Poppins", fontSize: 16.sp, color: AppColors.buttonColor, fontWeight: FontWeight.bold)),
+                  Text("Discount",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Poppins",
+                          fontSize: 16.sp)),
+                  Text("\$10",
+                      style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontSize: 16.sp,
+                          color: AppColors.buttonColor,
+                          fontWeight: FontWeight.bold)),
                 ],
               ),
             ],
@@ -196,19 +237,29 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
       ),
       child: Column(
         children: [
-           SizedBox(height: 10.h),
+          SizedBox(height: 10.h),
           InkWell(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) =>  const PaymentInfoScreen())).then((value) {
+              Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const PaymentInfoScreen()))
+                  .then((value) {
                 if (value == true) {
                   _loadUserCardInfo(); // Reload card info when returning from PaymentInfoScreen
                 }
               });
             },
-            child: SvgPicture.asset('assets/images/add.svg', height: 45.h, width: 45.w),
+            child: SvgPicture.asset('assets/images/add.svg',
+                height: 45.h, width: 45.w),
           ),
-           SizedBox(height: 10.h),
-          Text("Add Card", style: TextStyle(fontFamily: "Poppins", color: AppColors.buttonColor, fontSize: 16.sp, fontWeight: FontWeight.bold)),
+          SizedBox(height: 10.h),
+          Text("Add Card",
+              style: TextStyle(
+                  fontFamily: "Poppins",
+                  color: AppColors.buttonColor,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold)),
         ],
       ),
     );
@@ -219,11 +270,16 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text("Card: $userCardNumber", style:  TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold)),
+        Text("Card: $userCardNumber",
+            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold)),
         IconButton(
-          icon:  const Icon(Icons.edit),
+          icon: const Icon(Icons.edit),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) =>  const PaymentInfoScreen())).then((value) {
+            Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const PaymentInfoScreen()))
+                .then((value) {
               if (value == true) {
                 _loadUserCardInfo(); // Reload card info after editing
               }
@@ -269,13 +325,16 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
               ),
               elevation: 3,
               child: Padding(
-                padding:  EdgeInsets.all(15.0.h),
+                padding: EdgeInsets.all(15.0.h),
                 child: SvgPicture.asset(assetPath, height: 18.h, width: 18.w),
               ),
             ),
           ),
-          SizedBox(height: 5.h,),
-          Text(method, style:  TextStyle(fontFamily: "Poppins", fontSize: 14.sp)),
+          SizedBox(
+            height: 5.h,
+          ),
+          Text(method,
+              style: TextStyle(fontFamily: "Poppins", fontSize: 14.sp)),
           Radio<String>(
             value: method,
             groupValue: _selectedPaymentMethod,
@@ -310,7 +369,7 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
       print("Payment method saved to Firebase");
 
       // Show success message
-    Utils.toastMessage("Payment Successful", Colors.green);
+      Utils.toastMessage("Payment Successful", Colors.green);
     } else {
       print("No user logged in");
 

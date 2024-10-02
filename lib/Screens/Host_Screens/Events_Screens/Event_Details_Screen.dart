@@ -15,18 +15,12 @@ class EventDetailsScreen extends StatefulWidget {
   final String eventName;
   final String eventLocation;
   final String eventStartDate;
-  final String eventStartTime;
-  final String eventEndTime;
-  final String eventEndDate;
 
   EventDetailsScreen({
     required this.eventId,
     required this.eventName,
     required this.eventLocation,
     required this.eventStartDate,
-    required this.eventStartTime,
-    required this.eventEndTime,
-    required this.eventEndDate,
   });
 
   @override
@@ -37,9 +31,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   List<Map<String, dynamic>> runesList = [];
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final DatabaseReference _database = FirebaseDatabase.instanceFor(
-      app: Firebase.app(),
-      databaseURL:
-      'https://queme-app-3e7ae-default-rtdb.asia-southeast1.firebasedatabase.app/')
+          app: Firebase.app(),
+          databaseURL: 'https://queme-f9d7f-default-rtdb.firebaseio.com/')
       .ref();
 
   @override
@@ -62,7 +55,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
           .onValue
           .listen((event) {
         Map<dynamic, dynamic>? data =
-        event.snapshot.value as Map<dynamic, dynamic>?;
+            event.snapshot.value as Map<dynamic, dynamic>?;
         List<Map<String, dynamic>> loadedRunes = [];
 
         if (data != null) {
@@ -72,9 +65,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
               'runeName': value['runeName'],
               'runeLocation': value['runeLocation'],
               'runeStartDate': value['runeStartDate'],
-              'runeEndDate': value['runeEndDate'],
-              'runeStartTime': value['runeStartTime'],
-              'runeEndTime': value['runeEndTime'],
             });
           });
         }
@@ -179,7 +169,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             SizedBox(height: 5.h),
             TextFormField(
               initialValue: widget.eventName,
-              style: TextStyle(fontSize:16.h, color: Colors.black),
+              style: TextStyle(fontSize: 16.h, color: Colors.black),
               enabled: false,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(
@@ -190,63 +180,28 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
               ),
             ),
             SizedBox(height: 10.h),
-            Row(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Starts",
-                        style: TextStyle(
-                          fontSize: 16.h,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Palanquin Dark',
-                        ),
-                      ),
-                      SizedBox(height: 5.h),
-                      TextFormField(
-                        initialValue: widget.eventStartDate,
-                        style: TextStyle(fontSize: 16.h, color: Colors.black),
-                        enabled: false,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                Text(
+                  "Date",
+                  style: TextStyle(
+                    fontSize: 16.h,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Palanquin Dark',
                   ),
                 ),
-                SizedBox(width: 10.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Ends",
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Palanquin Dark',
-                        ),
+                SizedBox(height: 5.h),
+                TextFormField(
+                  initialValue: widget.eventStartDate,
+                  style: TextStyle(fontSize: 16.h, color: Colors.black),
+                  enabled: false,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.black,
                       ),
-                      SizedBox(height: 5.h),
-                      TextFormField(
-                        initialValue: widget.eventEndDate,
-                        style: TextStyle(fontSize: 16.sp, color: Colors.black),
-                        enabled: false,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ],
@@ -295,123 +250,123 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             Expanded(
               child: runesList.isNotEmpty
                   ? ListView.builder(
-                itemCount: runesList.length,
-                itemBuilder: (context, index) {
-                  var rune = runesList[index];
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 20),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.grey.shade200,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 2,
-                          blurRadius: 7,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            rune['runeName'] ?? 'No name',
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Poppins',
+                      itemCount: runesList.length,
+                      itemBuilder: (context, index) {
+                        var rune = runesList[index];
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 20),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.grey.shade200,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 7,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  rune['runeName'] ?? 'No name',
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Poppins',
+                                  ),
+                                ),
+                                SizedBox(height: 5.h),
+                                Row(
+                                  children: [
+                                    Icon(Icons.calendar_month, size: 24.h),
+                                    SizedBox(width: 5.w),
+                                    Text("${rune['runeStartDate']}",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14.sp)),
+                                  ],
+                                ),
+                                SizedBox(height: 5.h),
+                                Row(
+                                  children: [
+                                    Icon(Icons.location_on_outlined,
+                                        size: 20.h),
+                                    SizedBox(width: 5.w),
+                                    Text(rune['runeLocation'] ?? 'No location',
+                                        style: TextStyle(
+                                            fontSize: 14.sp,
+                                            fontWeight: FontWeight.bold))
+                                  ],
+                                ),
+                                SizedBox(height: 10.h),
+                                RunesButton(
+                                    title: "Start Run",
+                                    onPress: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => HostRunsScreen(
+                                            eventId: widget.eventId,
+                                            runeId: rune['runeId'],
+                                            runeName: rune['runeName'],
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                                SizedBox(height: 10.h),
+                                RunesButton2(
+                                  title: "End Run",
+                                  onPress: () async {
+                                    final result = await showDialog<bool>(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: Text('Are you sure?'),
+                                            content: Text(
+                                                'This will end the run and delete the rune. Are you sure?'),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context)
+                                                      .pop(false);
+                                                },
+                                                child: Text('Cancel'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context)
+                                                      .pop(true);
+                                                },
+                                                child: Text('Yes'),
+                                              ),
+                                            ],
+                                          );
+                                        });
+
+                                    if (result == true) {
+                                      await _deleteRune(rune['runeId']);
+                                    }
+                                  },
+                                ),
+                                SizedBox(height: 10.h),
+                              ],
                             ),
                           ),
-                          SizedBox(height: 5.h),
-                          Row(
-                            children: [
-                              Icon(Icons.calendar_month, size: 24.h),
-                              SizedBox(width: 5.w),
-                              Text(
-                                  "${rune['runeStartDate']} - ${rune['runeStartTime']}",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14.sp)),
-                            ],
-                          ),
-                          SizedBox(height: 5.h),
-                          Row(
-                            children: [
-                              Icon(Icons.location_on_outlined,
-                                  size: 20.h),
-                              SizedBox(width: 5.w),
-                              Text(rune['runeLocation'] ?? 'No location',
-                                  style: TextStyle(
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.bold))
-                            ],
-                          ),
-                          SizedBox(height: 10.h),
-                          RunesButton(
-                              title: "Start Run",
-                              onPress: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        HostRunsScreen(
-                                          eventId: widget.eventId,
-                                          runeId: rune['runeId'],
-                                          runeName: rune['runeName'],
-                                        ),
-                                  ),
-                                );
-                              }),
-                          SizedBox(height: 10.h),
-                          RunesButton2(
-                            title: "End Run",
-                            onPress: () async {
-                              final result = await showDialog<bool>(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title: Text('Are you sure?'),
-                                      content: Text(
-                                          'This will end the run and delete the rune. Are you sure?'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop(false);
-                                          },
-                                          child: Text('Cancel'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop(true);
-                                          },
-                                          child: Text('Yes'),
-                                        ),
-                                      ],
-                                    );
-                                  });
-
-                              if (result == true) {
-                                await _deleteRune(rune['runeId']);
-                              }
-                            },
-                          ),
-                          SizedBox(height: 10.h),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              )
+                        );
+                      },
+                    )
                   : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.delete_forever_outlined, size: 70.h),
-                  const Center(child: Text('No Runs Created Yet')),
-                ],
-              ),
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.delete_forever_outlined, size: 70.h),
+                        const Center(child: Text('No Runs Created Yet')),
+                      ],
+                    ),
             )
           ],
         ),

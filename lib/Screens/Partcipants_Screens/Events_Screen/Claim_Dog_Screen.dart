@@ -33,8 +33,7 @@ class _ClainDogScreenState extends State<ClainDogScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final DatabaseReference _database = FirebaseDatabase.instanceFor(
     app: Firebase.app(),
-    databaseURL:
-        'https://queme-app-3e7ae-default-rtdb.asia-southeast1.firebasedatabase.app/',
+    databaseURL: 'https://queme-f9d7f-default-rtdb.firebaseio.com/',
   ).ref();
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
@@ -77,7 +76,8 @@ class _ClainDogScreenState extends State<ClainDogScreen> {
     await showDialog(
       context: context,
       builder: (context) {
-        return StatefulBuilder( // Use StatefulBuilder to manage the state within the dialog
+        return StatefulBuilder(
+          // Use StatefulBuilder to manage the state within the dialog
           builder: (context, setState) {
             return AlertDialog(
               title: const Text('Add Dog'),
@@ -102,7 +102,8 @@ class _ClainDogScreenState extends State<ClainDogScreen> {
                         isLoading = true;
                       });
 
-                      image = await ImagePicker().pickImage(source: ImageSource.gallery);
+                      image = await ImagePicker()
+                          .pickImage(source: ImageSource.gallery);
 
                       setState(() {
                         isLoading = false;
@@ -133,9 +134,12 @@ class _ClainDogScreenState extends State<ClainDogScreen> {
                 TextButton(
                   child: const Text('Save'),
                   onPressed: () async {
-                    if (dogNameController.text.isNotEmpty && dogBreedController.text.isNotEmpty && image != null) {
+                    if (dogNameController.text.isNotEmpty &&
+                        dogBreedController.text.isNotEmpty &&
+                        image != null) {
                       setState(() {
-                        isLoading = true; // Show loading indicator when save starts
+                        isLoading =
+                            true; // Show loading indicator when save starts
                       });
 
                       // Upload image to Firebase Storage and get the URL
@@ -146,7 +150,12 @@ class _ClainDogScreenState extends State<ClainDogScreen> {
                       imageUrl = await ref.getDownloadURL();
 
                       // Save dog data to Firebase Realtime Database
-                      await _database.child('Users').child(uid).child('MyDogs').child(dogId).set({
+                      await _database
+                          .child('Users')
+                          .child(uid)
+                          .child('MyDogs')
+                          .child(dogId)
+                          .set({
                         'name': dogNameController.text,
                         'breed': dogBreedController.text,
                         'imageUrl': imageUrl,
@@ -159,7 +168,8 @@ class _ClainDogScreenState extends State<ClainDogScreen> {
                           'breed': dogBreedController.text,
                           'imageUrl': imageUrl,
                         });
-                        isLoading = false; // Hide loading indicator when save completes
+                        isLoading =
+                            false; // Hide loading indicator when save completes
                       });
 
                       // Reload the dog list to reflect the new addition
@@ -179,9 +189,11 @@ class _ClainDogScreenState extends State<ClainDogScreen> {
 
   // Method to edit a dog's name and picture
   Future<void> _editDog(BuildContext context, String dogId, String currentName,
-      String currentImageUrl , String currentBreed) async {
-    TextEditingController dogNameController = TextEditingController(text: currentName);
-    TextEditingController dogBreedController = TextEditingController(text: currentBreed);
+      String currentImageUrl, String currentBreed) async {
+    TextEditingController dogNameController =
+        TextEditingController(text: currentName);
+    TextEditingController dogBreedController =
+        TextEditingController(text: currentBreed);
     XFile? newImage;
     String newImageUrl = currentImageUrl;
     String newBreed = currentBreed;
@@ -291,12 +303,18 @@ class _ClainDogScreenState extends State<ClainDogScreen> {
   }
 
 // Method to claim the dog
-  Future<void> _claimDog(String dogId, String dogName, String dogBreed, String imageUrl) async {
+  Future<void> _claimDog(
+      String dogId, String dogName, String dogBreed, String imageUrl) async {
     String uid = _auth.currentUser!.uid;
 
     try {
       // Update the 'claimed' field to true in the 'MyDogs' node for the current user
-      await _database.child('Users').child(uid).child('MyDogs').child(dogId).update({
+      await _database
+          .child('Users')
+          .child(uid)
+          .child('MyDogs')
+          .child(dogId)
+          .update({
         'claimed': true,
       });
 
@@ -321,70 +339,71 @@ class _ClainDogScreenState extends State<ClainDogScreen> {
     }
   }
 
-
   Widget _buildDogsList() {
     return _dogsList.isEmpty
         ? const Center(child: Text("No dogs to see"))
         : _isLoading
-        ? const Center(child: Text("Please Wait"))
-        : Column(
-      children: _dogsList.map((dog) {
-        return Padding(
-          padding: EdgeInsets.all(8.0.h),
-          child: Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: ListTile(
-                  leading: dog['imageUrl'] == null
-                      ? const Center(child: CircularProgressIndicator())
-                      : Image.network(
-                    dog['imageUrl']!,
-                    width: 70.w,
-                    height: 70.h,
-                    fit: BoxFit.cover,
-                    loadingBuilder:
-                        (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return const Center(
-                          child: CircularProgressIndicator());
-                    },
-                  ),
-                  title: Text(
-                    dog['name']!,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontFamily: "Poppins",
-                        fontSize: 16.sp),
-                  ),
-                ),
-              ),
-              Positioned(
-                right: 225.w,
-                top: 25.h,
-                child: IconButton(
-                  icon: const Icon(Icons.edit, color: Colors.red),
-                  onPressed: () {
-                    _editDog(context, dog['id']!, dog['name']!,
-                        dog['imageUrl']! , dog['breed']!);
-                  },
-                ),
-              ),
-              Positioned(
-                left: 225.w,
-                top: 20.h,
-                child: FollowButton(
-                  title: "Claim",
-                  onPress: () {
-                    _claimDog(dog['id']!, dog['name']!, dog['breed']!, dog['imageUrl']!); // Claim the dog by updating the database
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      }).toList(),
-    );
+            ? const Center(child: Text("Please Wait"))
+            : Column(
+                children: _dogsList.map((dog) {
+                  return Padding(
+                    padding: EdgeInsets.all(8.0.h),
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: ListTile(
+                            leading: dog['imageUrl'] == null
+                                ? const Center(
+                                    child: CircularProgressIndicator())
+                                : Image.network(
+                                    dog['imageUrl']!,
+                                    width: 70.w,
+                                    height: 70.h,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return const Center(
+                                          child: CircularProgressIndicator());
+                                    },
+                                  ),
+                            title: Text(
+                              dog['name']!,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: "Poppins",
+                                  fontSize: 16.sp),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          right: 225.w,
+                          top: 25.h,
+                          child: IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.red),
+                            onPressed: () {
+                              _editDog(context, dog['id']!, dog['name']!,
+                                  dog['imageUrl']!, dog['breed']!);
+                            },
+                          ),
+                        ),
+                        Positioned(
+                          left: 225.w,
+                          top: 20.h,
+                          child: FollowButton(
+                            title: "Claim",
+                            onPress: () {
+                              _claimDog(dog['id']!, dog['name']!, dog['breed']!,
+                                  dog['imageUrl']!); // Claim the dog by updating the database
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              );
   }
 
   @override
@@ -472,7 +491,9 @@ class _ClainDogScreenState extends State<ClainDogScreen> {
                       child: SvgPicture.asset('assets/images/upload.svg',
                           height: 28.h, width: 28.h, color: Colors.black),
                     ),
-                    SizedBox(height: 5.h,),
+                    SizedBox(
+                      height: 5.h,
+                    ),
                     Text(
                       "Upload your dog picture",
                       style: TextStyle(
@@ -488,9 +509,11 @@ class _ClainDogScreenState extends State<ClainDogScreen> {
               SizedBox(
                 height: 20.h,
               ),
-              RoundButton2(title: "Cancel", onPress: () {
-                Navigator.pop(context);
-              }),
+              RoundButton2(
+                  title: "Cancel",
+                  onPress: () {
+                    Navigator.pop(context);
+                  }),
             ],
           ),
         ),

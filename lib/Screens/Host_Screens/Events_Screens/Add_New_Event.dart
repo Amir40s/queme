@@ -20,23 +20,17 @@ class _AddNewEventState extends State<AddNewEvent> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
-  final TextEditingController startDateController = TextEditingController(); // Start date
-  final TextEditingController endDateController = TextEditingController(); // End date
-  final TextEditingController startTimeController = TextEditingController();
-  final TextEditingController endTimeController = TextEditingController();
-
+  final TextEditingController startDateController =
+      TextEditingController(); // Start date
   final FocusNode nameFocusNode = FocusNode();
   final FocusNode locationFocusNode = FocusNode();
   final FocusNode startDateFocusNode = FocusNode();
-  final FocusNode endDateFocusNode = FocusNode(); // End date focus node
-  final FocusNode startTimeFocusNode = FocusNode();
-  final FocusNode endTimeFocusNode = FocusNode();
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final DatabaseReference _database = FirebaseDatabase.instanceFor(
-      app: Firebase.app(),
-      databaseURL: 'https://queme-app-3e7ae-default-rtdb.asia-southeast1.firebasedatabase.app/'
-  ).ref();
+          app: Firebase.app(),
+          databaseURL: 'https://queme-f9d7f-default-rtdb.firebaseio.com/')
+      .ref();
 
   String? validateNotEmpty(String? value, String fieldName) {
     if (value == null || value.isEmpty) {
@@ -45,7 +39,8 @@ class _AddNewEventState extends State<AddNewEvent> {
     return null;
   }
 
-  Future<void> _selectDate(BuildContext context, TextEditingController controller) async {
+  Future<void> _selectDate(
+      BuildContext context, TextEditingController controller) async {
     DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -61,7 +56,8 @@ class _AddNewEventState extends State<AddNewEvent> {
     }
   }
 
-  Future<void> _selectTime(BuildContext context, TextEditingController controller) async {
+  Future<void> _selectTime(
+      BuildContext context, TextEditingController controller) async {
     TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
@@ -79,7 +75,7 @@ class _AddNewEventState extends State<AddNewEvent> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
-          padding:  EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
           child: Form(
             key: _formKey,
             child: Column(
@@ -96,7 +92,7 @@ class _AddNewEventState extends State<AddNewEvent> {
                         ),
                         elevation: 3,
                         child: Padding(
-                          padding:  EdgeInsets.all(15.0.h),
+                          padding: EdgeInsets.all(15.0.h),
                           child: SvgPicture.asset(
                             'assets/images/back_arrow.svg',
                             height: 24.h,
@@ -105,8 +101,8 @@ class _AddNewEventState extends State<AddNewEvent> {
                         ),
                       ),
                     ),
-                     SizedBox(width: 10.w),
-                     Text(
+                    SizedBox(width: 10.w),
+                    Text(
                       "Add new event",
                       style: TextStyle(
                         color: Colors.black,
@@ -117,7 +113,7 @@ class _AddNewEventState extends State<AddNewEvent> {
                     ),
                   ],
                 ),
-                 SizedBox(height: 10.h),
+                SizedBox(height: 10.h),
                 _buildTextField(
                   "Event Name",
                   nameController,
@@ -125,7 +121,7 @@ class _AddNewEventState extends State<AddNewEvent> {
                   TextInputAction.next,
                   validateNotEmpty,
                 ),
-                 SizedBox(height: 10.h),
+                SizedBox(height: 10.h),
                 _buildTextField(
                   "Event Location",
                   locationController,
@@ -133,35 +129,14 @@ class _AddNewEventState extends State<AddNewEvent> {
                   TextInputAction.next,
                   validateNotEmpty,
                 ),
-                 SizedBox(height: 10.h),
+                SizedBox(height: 10.h),
                 _buildDateField(
                   "Event Start Date",
                   startDateController,
                   startDateFocusNode,
-                      () => _selectDate(context, startDateController),
+                  () => _selectDate(context, startDateController),
                 ),
-                 SizedBox(height: 10.h),
-                _buildDateField(
-                  "Event End Date",
-                  endDateController,
-                  endDateFocusNode,
-                      () => _selectDate(context, endDateController),
-                ),
-                 SizedBox(height: 10.h),
-                _buildTimeField(
-                  "Event Start Time",
-                  startTimeController,
-                  startTimeFocusNode,
-                      () => _selectTime(context, startTimeController),
-                ),
-                 SizedBox(height: 10.h),
-                _buildTimeField(
-                  "Event End Time",
-                  endTimeController,
-                  endTimeFocusNode,
-                      () => _selectTime(context, endTimeController),
-                ),
-                 SizedBox(height: 30.h),
+                SizedBox(height: 30.h),
                 RoundButton(
                   title: "Create New Event",
                   onPress: () {
@@ -174,48 +149,49 @@ class _AddNewEventState extends State<AddNewEvent> {
                         // Generate a unique event ID
                         String eventId = _database.child("Events").push().key!;
 
-                        // Print values for debugging
-                        print('Event Start Date: ${startDateController.text}');
-
                         // Create event data
                         Map<String, String> eventData = {
                           'eventName': nameController.text,
                           'eventLocation': locationController.text,
-                          'eventStartDate': startDateController.text,  // Make sure this is set
-                          'eventEndDate': endDateController.text,
-                          'eventStartTime': startTimeController.text,
-                          'eventEndTime': endTimeController.text,
+                          'eventStartDate': startDateController.text,
                         };
 
                         // Save event under current user's UID
-                        _database.child("Users").child(uid).child("Events").child(eventId).set(eventData)
+                        _database
+                            .child("Users")
+                            .child(uid)
+                            .child("Events")
+                            .child(eventId)
+                            .set(eventData)
                             .then((_) {
                           // ALSO save the event under global Events node for all users
-                          _database.child("Events").child(eventId).set(eventData)
+                          _database
+                              .child("Events")
+                              .child(eventId)
+                              .set(eventData)
                               .then((_) {
-                            Utils.toastMessage("Event created successfully", Colors.green);
+                            Utils.toastMessage(
+                                "Event created successfully", Colors.green);
                             Navigator.pop(context);
 
                             // Optionally clear the form fields
                             nameController.clear();
                             locationController.clear();
                             startDateController.clear();
-                            endDateController.clear();
-                            startTimeController.clear();
-                            endTimeController.clear();
-                          })
-                              .catchError((error) {
-                            Utils.toastMessage("Failed to create public event: $error", Colors.red);
+                          }).catchError((error) {
+                            Utils.toastMessage(
+                                "Failed to create public event: $error",
+                                Colors.red);
                           });
-                        })
-                            .catchError((error) {
-                          Utils.toastMessage("Failed to create event: $error", Colors.red);
+                        }).catchError((error) {
+                          Utils.toastMessage(
+                              "Failed to create event: $error", Colors.red);
                         });
                       }
                     }
                   },
                 ),
-                 SizedBox(height: 10.h),
+                SizedBox(height: 10.h),
                 RoundButton2(
                   title: "Cancel",
                   onPress: () {
@@ -231,12 +207,12 @@ class _AddNewEventState extends State<AddNewEvent> {
   }
 
   Widget _buildTextField(
-      String label,
-      TextEditingController controller,
-      FocusNode focusNode,
-      TextInputAction textInputAction,
-      String? Function(String?, String) validator,
-      ) {
+    String label,
+    TextEditingController controller,
+    FocusNode focusNode,
+    TextInputAction textInputAction,
+    String? Function(String?, String) validator,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -248,7 +224,7 @@ class _AddNewEventState extends State<AddNewEvent> {
             fontFamily: 'Palanquin Dark',
           ),
         ),
-         SizedBox(height: 5.h),
+        SizedBox(height: 5.h),
         TextFormField(
           controller: controller,
           focusNode: focusNode,
@@ -259,7 +235,7 @@ class _AddNewEventState extends State<AddNewEvent> {
           decoration: InputDecoration(
             // contentPadding: EdgeInsets.symmetric(
             //     vertical: size.height * 0.020, horizontal: 10),
-            border:  const OutlineInputBorder(),
+            border: const OutlineInputBorder(),
             hintText: "Enter $label",
             hintStyle: TextStyle(
               fontFamily: 'Poppins',
@@ -276,11 +252,11 @@ class _AddNewEventState extends State<AddNewEvent> {
   }
 
   Widget _buildDateField(
-      String label,
-      TextEditingController controller,
-      FocusNode focusNode,
-      VoidCallback onTap,
-      ) {
+    String label,
+    TextEditingController controller,
+    FocusNode focusNode,
+    VoidCallback onTap,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -292,7 +268,7 @@ class _AddNewEventState extends State<AddNewEvent> {
             fontFamily: 'Palanquin Dark',
           ),
         ),
-         SizedBox(height: 5),
+        SizedBox(height: 5),
         TextFormField(
           controller: controller,
           focusNode: focusNode,
@@ -305,11 +281,11 @@ class _AddNewEventState extends State<AddNewEvent> {
           decoration: InputDecoration(
             // contentPadding: EdgeInsets.symmetric(
             //     vertical: size.height * 0.020, horizontal: 10),
-            suffixIcon:  Padding(
+            suffixIcon: Padding(
               padding: EdgeInsets.only(right: 10),
               child: Icon(Icons.date_range, size: 24.h),
             ),
-            border:  const OutlineInputBorder(),
+            border: const OutlineInputBorder(),
             hintText: "Choose $label",
             hintStyle: TextStyle(
               fontFamily: 'Poppins',
@@ -324,11 +300,11 @@ class _AddNewEventState extends State<AddNewEvent> {
   }
 
   Widget _buildTimeField(
-      String label,
-      TextEditingController controller,
-      FocusNode focusNode,
-      VoidCallback onTap,
-      ) {
+    String label,
+    TextEditingController controller,
+    FocusNode focusNode,
+    VoidCallback onTap,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -340,7 +316,7 @@ class _AddNewEventState extends State<AddNewEvent> {
             fontFamily: 'Palanquin Dark',
           ),
         ),
-         SizedBox(height: 5.h),
+        SizedBox(height: 5.h),
         TextFormField(
           controller: controller,
           focusNode: focusNode,
@@ -353,11 +329,11 @@ class _AddNewEventState extends State<AddNewEvent> {
           decoration: InputDecoration(
             // contentPadding: EdgeInsets.symmetric(
             //     vertical: size.height * 0.02, horizontal: 10),
-            suffixIcon:   Padding(
+            suffixIcon: Padding(
               padding: EdgeInsets.only(right: 10.w),
               child: Icon(Icons.timelapse, size: 24.h),
             ),
-            border:  const OutlineInputBorder(),
+            border: const OutlineInputBorder(),
             hintText: "Choose $label",
             hintStyle: TextStyle(
               fontFamily: 'Poppins',

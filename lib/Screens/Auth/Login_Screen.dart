@@ -27,8 +27,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final DatabaseReference _database = FirebaseDatabase.instanceFor(
-      app: Firebase.app(),
-      databaseURL: 'https://queme-app-3e7ae-default-rtdb.asia-southeast1.firebasedatabase.app/')
+          app: Firebase.app(),
+          databaseURL: 'https://queme-f9d7f-default-rtdb.firebaseio.com/')
       .ref();
 
   final ValueNotifier<bool> _obscurePassword = ValueNotifier<bool>(true);
@@ -57,14 +57,17 @@ class _LoginScreenState extends State<LoginScreen> {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) return;
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      UserCredential userCredential = await _auth.signInWithCredential(credential);
-      await _saveUserDataToDatabase(userCredential.user, googleUser.displayName ?? 'Google User');
+      UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
+      await _saveUserDataToDatabase(
+          userCredential.user, googleUser.displayName ?? 'Google User');
       Utils.toastMessage("Login Successful", Colors.green);
       _navigateBasedOnUserType(userCredential.user);
     } catch (e) {
@@ -87,7 +90,8 @@ class _LoginScreenState extends State<LoginScreen> {
           .child('MyDogs')
           .once(); // Get the data once
 
-      Map<dynamic, dynamic>? data = event.snapshot.value as Map<dynamic, dynamic>?;
+      Map<dynamic, dynamic>? data =
+          event.snapshot.value as Map<dynamic, dynamic>?;
       Map<String, dynamic> myDogs = {};
 
       // If there's data, process it into the format you want
@@ -112,7 +116,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-
   // Login with Facebook
   Future<void> _loginWithFacebook() async {
     setState(() {
@@ -121,15 +124,17 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final LoginResult result = await FacebookAuth.instance.login();
       if (result.status == LoginStatus.success) {
-        final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(result.accessToken!.tokenString);
-        UserCredential userCredential = await _auth.signInWithCredential(facebookAuthCredential);
+        final OAuthCredential facebookAuthCredential =
+            FacebookAuthProvider.credential(result.accessToken!.tokenString);
+        UserCredential userCredential =
+            await _auth.signInWithCredential(facebookAuthCredential);
         await _saveUserDataToDatabase(userCredential.user, 'Facebook User');
         _navigateBasedOnUserType(userCredential.user);
       } else {
-       Utils.toastMessage(result.message.toString(), Colors.red);
+        Utils.toastMessage(result.message.toString(), Colors.red);
       }
     } catch (e) {
-     Utils.toastMessage(e.toString(), Colors.red);
+      Utils.toastMessage(e.toString(), Colors.red);
     } finally {
       setState(() {
         isLoading = false;
@@ -166,7 +171,8 @@ class _LoginScreenState extends State<LoginScreen> {
       DataSnapshot snapshot = await userRef.get();
 
       if (snapshot.exists) {
-        Map<dynamic, dynamic> userData = snapshot.value as Map<dynamic, dynamic>;
+        Map<dynamic, dynamic> userData =
+            snapshot.value as Map<dynamic, dynamic>;
         String userType = userData['userType'] ?? 'Participant';
         String paymentStatus = userData['paymentok'] ?? 'pending';
 
@@ -178,12 +184,18 @@ class _LoginScreenState extends State<LoginScreen> {
         } else if (userType == 'Participant') {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const ParticipentBottomNav()),
+            MaterialPageRoute(
+                builder: (context) => const ParticipentBottomNav()),
           );
         } else {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const PaymentPlansScreen()));
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const PaymentPlansScreen()));
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Payment not approved. Please complete the payment.')),
+            const SnackBar(
+                content:
+                    Text('Payment not approved. Please complete the payment.')),
           );
         }
       }
@@ -229,7 +241,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 28.w, vertical: 40.h), // Adjusted padding
+          padding: EdgeInsets.symmetric(
+              horizontal: 28.w, vertical: 40.h), // Adjusted padding
           child: SingleChildScrollView(
             child: Form(
               key: _formKey,
@@ -239,7 +252,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Text(
                       "Log In",
                       style: TextStyle(
-                        fontSize: 24.sp, // Adjusted with .sp for responsive text size
+                        fontSize:
+                            24.sp, // Adjusted with .sp for responsive text size
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Palanquin Dark',
                       ),
@@ -258,17 +272,22 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   SizedBox(height: 15.h),
-                  SvgPicture.asset('assets/images/dog_logo.svg', height: 72.h, width: 146.w), // Adjusted size
+                  SvgPicture.asset('assets/images/dog_logo.svg',
+                      height: 72.h, width: 146.w), // Adjusted size
                   SizedBox(height: 10.h),
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: Text("Email", style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold)),
+                    child: Text("Email",
+                        style: TextStyle(
+                            fontSize: 16.sp, fontWeight: FontWeight.bold)),
                   ),
                   SizedBox(height: 5.h),
                   TextFormField(
                     controller: emailController,
                     focusNode: emailFocusNode,
-                    style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold), // Adjusted text size
+                    style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.bold), // Adjusted text size
                     decoration: InputDecoration(
                       // contentPadding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 10.w), // Adjusted padding
                       suffixIcon: Icon(Icons.email_outlined, size: 24.sp),
@@ -276,14 +295,18 @@ class _LoginScreenState extends State<LoginScreen> {
                       hintText: "Enter email",
                     ),
                     validator: validateEmail,
-                    onFieldSubmitted: (value) => FocusScope.of(context).requestFocus(passwordFocusNode),
+                    onFieldSubmitted: (value) =>
+                        FocusScope.of(context).requestFocus(passwordFocusNode),
                     textInputAction: TextInputAction.next,
                   ),
                   SizedBox(height: 10.h),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text("Password",
-                      style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold)), // Adjusted text size),
+                        style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight:
+                                FontWeight.bold)), // Adjusted text size),
                   ),
                   SizedBox(height: 5.h),
                   ValueListenableBuilder(
@@ -294,14 +317,22 @@ class _LoginScreenState extends State<LoginScreen> {
                         obscureText: _obscurePassword.value,
                         obscuringCharacter: '*',
                         focusNode: passwordFocusNode,
-                        style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold), // Adjusted text size
+                        style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.bold), // Adjusted text size
                         decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 10.w), // Adjusted padding
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 20.h,
+                              horizontal: 10.w), // Adjusted padding
                           suffixIcon: InkWell(
                             onTap: () {
                               _obscurePassword.value = !_obscurePassword.value;
                             },
-                            child: Icon(_obscurePassword.value ? Icons.visibility_off : Icons.visibility, size: 24.sp),
+                            child: Icon(
+                                _obscurePassword.value
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                size: 24.sp),
                           ),
                           border: const OutlineInputBorder(),
                           hintText: "Enter Password",
@@ -313,34 +344,61 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SizedBox(height: 10.h),
                   InkWell(
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const ForgetPassword()));
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const ForgetPassword()));
                     },
                     child: Align(
                       alignment: Alignment.centerRight,
-                      child: Text("Forgot Password", style: TextStyle(fontSize: 16.sp, color: AppColors.buttonColor,fontWeight: FontWeight.bold)),
+                      child: Text("Forgot Password",
+                          style: TextStyle(
+                              fontSize: 16.sp,
+                              color: AppColors.buttonColor,
+                              fontWeight: FontWeight.bold)),
                     ),
                   ),
                   SizedBox(height: 30.h),
                   isLoading
                       ? const CircularProgressIndicator()
                       : RoundButton(
-                    title: "Log In",
-                    onPress: () => _loginWithEmailPassword(),
-                  ),
+                          title: "Log In",
+                          onPress: () => _loginWithEmailPassword(),
+                        ),
                   SizedBox(height: 10.h),
                   RoundButton2(
                     title: "Register",
-                    onPress: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const RegisterScreen())),
+                    onPress: () => Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const RegisterScreen())),
                   ),
                   SizedBox(height: 20.h),
-                  SvgPicture.asset('assets/images/cwith.svg', height: 60.h,width: 90.w,),
+                  SvgPicture.asset(
+                    'assets/images/cwith.svg',
+                    height: 60.h,
+                    width: 90.w,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      InkWell(onTap: _loginWithGoogle, child: SvgPicture.asset('assets/images/google.svg', height: 48.h,width: 48.w,)),
-                       SizedBox(width: 10.w),
-                      InkWell(onTap: _loginWithFacebook, child: SvgPicture.asset('assets/images/facebook.svg', height: 48.h,width: 48.w,)),
+                      InkWell(
+                        onTap: _loginWithGoogle,
+                        child: SvgPicture.asset(
+                          'assets/images/google.svg',
+                          height: 48.h,
+                          width: 48.w,
+                        ),
+                      ),
+                      SizedBox(width: 10.w),
+                      InkWell(
+                          onTap: _loginWithFacebook,
+                          child: SvgPicture.asset(
+                            'assets/images/facebook.svg',
+                            height: 48.h,
+                            width: 48.w,
+                          )),
                     ],
                   ),
                   SizedBox(height: 20.h),
@@ -355,7 +413,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Already have an account?",
+                          "Don't have an account?",
                           style: TextStyle(
                               fontSize: 14.sp,
                               fontWeight: FontWeight.bold,
