@@ -62,7 +62,7 @@ class _PartiEventDetailsState extends State<PartiEventDetails> {
               'runeName': value['runeName'],
               'runeLocation': value['runeLocation'],
               'runeStartDate': value['runeStartDate'],
-              'runeEndDate': value['runeEndDate'],
+              'eventId': value['eventId'],
             });
           });
         }
@@ -80,75 +80,70 @@ class _PartiEventDetailsState extends State<PartiEventDetails> {
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
         child: Consumer<EventProvider>(builder: (context, provider, child) {
-          return Column(
-            children: [
-              Row(
-                children: [
-                  InkWell(
-                    onTap: () => Navigator.pop(context),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      elevation: 3,
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: SvgPicture.asset(
-                          'assets/images/back_arrow.svg',
-                          height: 24.h,
-                          width: 24.w,
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: () => Navigator.pop(context),
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        elevation: 3,
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: SvgPicture.asset(
+                            'assets/images/back_arrow.svg',
+                            height: 24.h,
+                            width: 24.w,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(width: 5.h),
-                  Text(
-                    "Event Details",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontFamily: "Palanquin Dark",
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
+                    SizedBox(width: 5.h),
+                    Text(
+                      "Event Details",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "Palanquin Dark",
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  const Spacer(),
-                  FollowButton(
-                    title: provider.followingEventIds.contains(widget.eventId)
-                        ? "Unfollow"
-                        : "Follow",
-                    onPress: () {
-                      provider.followingEventIds.contains(widget.eventId)
-                          ? provider.unfollowEvent(widget.eventId)
-                          : provider.followEvent(
-                              widget.eventId,
-                              widget.eventName,
-                              widget.eventStartDate,
-                              widget.eventLocation);
-                    },
-                  ),
-                ],
-              ),
-              SizedBox(height: 15.h),
-              _buildEventDetail("Event Name", widget.eventName),
-              SizedBox(height: 10.h),
-              _buildEventDetail("Starts", widget.eventStartDate),
-              SizedBox(height: 10.h),
-              _buildEventDetail("Location", widget.eventLocation),
-              const SizedBox(height: 20),
-              Text(
-                "Runs",
-                style: TextStyle(
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Palanquin Dark',
-                  color: AppColors.buttonColor,
+                    const Spacer(),
+                    FollowButton(
+                      title: provider.followingEventIds.contains(widget.eventId)
+                          ? "Unfollow"
+                          : "Follow",
+                      onPress: () {
+                        provider.followingEventIds.contains(widget.eventId)
+                            ? provider.unfollowEvent(widget.eventId)
+                            : provider.followEvent(
+                                widget.eventId,
+                                widget.eventName,
+                                widget.eventStartDate,
+                                widget.eventLocation);
+                      },
+                    ),
+                  ],
                 ),
-              ),
-              SizedBox(height: 10.h),
-              Divider(thickness: 3.w, color: AppColors.buttonColor),
-              Expanded(
-                child: runesList.isNotEmpty
+                Text(
+                  "Runs",
+                  style: TextStyle(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Palanquin Dark',
+                    color: AppColors.buttonColor,
+                  ),
+                ),
+                SizedBox(height: 10.h),
+                Divider(thickness: 3.w, color: AppColors.buttonColor),
+                runesList.isNotEmpty
                     ? ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
                         itemCount: runesList.length,
                         itemBuilder: (context, index) {
                           final rune = runesList[index];
@@ -156,19 +151,26 @@ class _PartiEventDetailsState extends State<PartiEventDetails> {
                         },
                       )
                     : _buildNoRunsWidget(),
-              ),
-              RoundButton(
-                title: provider.followingEventIds.contains(widget.eventId)
-                    ? "Unfollow this Event"
-                    : "Follow this Event",
-                onPress: () {
-                  provider.followingEventIds.contains(widget.eventId)
-                      ? provider.unfollowEvent(widget.eventId)
-                      : provider.followEvent(widget.eventId, widget.eventName,
-                          widget.eventStartDate, widget.eventLocation);
-                },
-              ),
-            ],
+                SizedBox(height: 15.h),
+                _buildEventDetail("Event Name", widget.eventName),
+                SizedBox(height: 10.h),
+                _buildEventDetail("Starts", widget.eventStartDate),
+                SizedBox(height: 10.h),
+                _buildEventDetail("Location", widget.eventLocation),
+                const SizedBox(height: 20),
+                RoundButton(
+                  title: provider.followingEventIds.contains(widget.eventId)
+                      ? "Unfollow this Event"
+                      : "Follow this Event",
+                  onPress: () {
+                    provider.followingEventIds.contains(widget.eventId)
+                        ? provider.unfollowEvent(widget.eventId)
+                        : provider.followEvent(widget.eventId, widget.eventName,
+                            widget.eventStartDate, widget.eventLocation);
+                  },
+                ),
+              ],
+            ),
           );
         }),
       ),
@@ -176,26 +178,21 @@ class _PartiEventDetailsState extends State<PartiEventDetails> {
   }
 
   Widget _buildEventDetail(String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
       children: [
         Text(
-          label,
+          "$label:   ",
           style: TextStyle(
-            fontSize: 16.sp,
+            fontSize: 17.h,
             fontWeight: FontWeight.bold,
             fontFamily: 'Palanquin Dark',
           ),
         ),
-        SizedBox(height: 5.h),
-        TextFormField(
-          initialValue: value,
-          style: TextStyle(fontSize: 16.sp, color: Colors.black),
-          enabled: false,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black),
-            ),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 16.h,
+            fontFamily: 'Palanquin Dark',
           ),
         ),
       ],
@@ -213,6 +210,7 @@ class _PartiEventDetailsState extends State<PartiEventDetails> {
               runeName: rune['runeName'],
               runeLocation: rune['runeLocation'],
               startingDate: rune['runeStartDate'],
+              eventId: rune['eventId'],
             ),
           ),
         );
@@ -242,7 +240,7 @@ class _PartiEventDetailsState extends State<PartiEventDetails> {
                   Text(
                     rune['runeName'] ?? 'No name',
                     style: TextStyle(
-                      fontSize: 20.h,
+                      fontSize: 17.h,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Poppins',
                     ),
@@ -262,9 +260,13 @@ class _PartiEventDetailsState extends State<PartiEventDetails> {
                     : "Follow",
                 onPress: () {
                   provider.followingRunsIds.contains(rune['runeId'])
-                      ? provider.unfollowRuns(rune['runeId'])
-                      : provider.followRune(rune['runeId'], rune['runeName'],
-                          rune['runeLocation'], rune['runeStartDate']);
+                      ? provider.unfollowRuns(rune['runeId'], rune['eventId'])
+                      : provider.followRune(
+                          rune['runeId'],
+                          rune['runeName'],
+                          rune['runeLocation'],
+                          rune['runeStartDate'],
+                          rune['eventId']);
                   // );
                 },
               ),
@@ -278,11 +280,11 @@ class _PartiEventDetailsState extends State<PartiEventDetails> {
   Widget _buildRuneDetailRow(IconData icon, String text) {
     return Row(
       children: [
-        Icon(icon, size: 24.h),
+        Icon(icon, size: 20.h),
         SizedBox(width: 5.w),
         Text(
           text,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.sp),
         ),
       ],
     );

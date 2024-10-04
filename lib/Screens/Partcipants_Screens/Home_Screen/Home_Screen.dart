@@ -33,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     Provider.of<EventProvider>(context, listen: false).fetchFollowingEventIds();
     Provider.of<EventProvider>(context, listen: false).fetchFollowingRuneIds();
+    Provider.of<EventProvider>(context, listen: false).fetchUserToken();
     _searchController.addListener(() {
       setState(() {}); // Triggers the UI update for search functionality
     });
@@ -94,7 +95,6 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 20),
               // Search bar
               Container(
-                height: 48.h,
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -116,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       border: InputBorder.none,
                       hintText: "Search Events",
                       hintStyle: TextStyle(
-                        fontSize: 15.h,
+                        fontSize: 15,
                         fontWeight: FontWeight.bold,
                         color: Colors.grey,
                         fontFamily: 'Poppins',
@@ -187,6 +187,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                         .toLowerCase()
                                         .contains(searchTerm))
                                     .toList();
+
+                            // Check if filteredEvents is empty
+                            if (filteredEvents.isEmpty) {
+                              return Padding(
+                                padding: EdgeInsets.only(top: 30.h),
+                                child: const Center(
+                                    child: Text('No events found')),
+                              );
+                            }
 
                             return ListView.builder(
                               shrinkWrap: true,
@@ -293,7 +302,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                           } else if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return CircularProgressIndicator();
+                            return Center(child: CircularProgressIndicator());
                           } else {
                             return Padding(
                               padding: EdgeInsets.only(top: 30.h),
@@ -339,6 +348,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           entry.value['runeStartDate'],
                                       'runeLocation':
                                           entry.value['runeLocation'],
+                                      'eventId': entry.value['eventId'],
                                     })
                                 .toList();
 
@@ -348,6 +358,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               itemCount: loadedRuns.length,
                               itemBuilder: (ctx, index) {
                                 var rune = loadedRuns[index];
+                                print(rune['eventId']);
                                 return GestureDetector(
                                   onTap: () {
                                     Navigator.push(
@@ -358,6 +369,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           runeName: rune['runeName'],
                                           runeLocation: rune['runeLocation'],
                                           startingDate: rune['runeStartDate'],
+                                          eventId: rune['eventId'] ?? '',
                                         ),
                                       ),
                                     );
@@ -415,12 +427,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                               provider.followingRunsIds
                                                       .contains(rune['runeId'])
                                                   ? provider.unfollowRuns(
-                                                      rune['runeId'])
+                                                      rune['runeId'],
+                                                      rune['eventId'])
                                                   : provider.followRune(
                                                       rune['runeId'],
                                                       rune['runeName'],
                                                       rune['runeLocation'],
-                                                      rune['runeStartDate']);
+                                                      rune['runeStartDate'],
+                                                      rune['eventId']);
                                             },
                                           ),
                                         ],
@@ -459,7 +473,7 @@ class _HomeScreenState extends State<HomeScreen> {
         SizedBox(width: 5.w),
         Text(
           text,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
         ),
       ],
     );

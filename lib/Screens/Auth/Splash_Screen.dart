@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:queme/Screens/Host_Screens/Host_Dashboard/host_bottom_nav.dart';
+import 'package:queme/Screens/Notifications/send_notification.dart';
 import '../Host_Screens/Host_Dashboard/Host_Dashboard.dart';
 import 'Login_Screen.dart';
 import '../Partcipants_Screens/Participent_BottomNav.dart';
@@ -30,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _navigateToNextScreen() async {
     // Wait for 3 seconds (splash screen duration)
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 2));
 
     User? currentUser = FirebaseAuth.instance.currentUser;
 
@@ -47,12 +48,15 @@ class _SplashScreenState extends State<SplashScreen> {
             userData['userType'] ?? 'Participant'; // Default to 'Participant'
         String paymentStatus =
             userData['paymentok'] ?? 'pending'; // Default to 'pending'
+
         if (userType == 'Host' && paymentStatus == 'approved') {
+          updateToken(currentUser.uid);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const HostBottomNav()),
           );
         } else if (userType == 'Participant') {
+          updateToken(currentUser.uid);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -79,6 +83,16 @@ class _SplashScreenState extends State<SplashScreen> {
         MaterialPageRoute(builder: (context) => const LoginScreen()),
       );
     }
+  }
+
+  void updateToken(String id) async {
+    final token = await SendNotification().generateDeviceId();
+
+    _database.child('Users').child(id).update(
+          ({
+            'token': token.toString(),
+          }),
+        );
   }
 
   @override

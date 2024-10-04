@@ -29,14 +29,11 @@ class SendNotification {
     }
   }
 
-  Future<void> generateDeviceId() async {
+  Future generateDeviceId() async {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
 
     String? token = await messaging.getToken();
-    if (token != null) {
-      print('Device ID: $token');
-    } else {
-      print('Failed to get device ID');
-    }
+
+    return token;
   }
 }

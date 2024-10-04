@@ -19,17 +19,24 @@ import '../../../Widgets/follow_button.dart';
 import '../../../Widgets/runes_button.dart';
 import 'Claim_Successfully.dart';
 
-class ClainDogScreen extends StatefulWidget {
-  const ClainDogScreen({super.key});
+class ClaimDogScreen extends StatefulWidget {
+  const ClaimDogScreen(
+      {super.key,
+      required this.eventId,
+      required this.runeId,
+      required this.dogId});
+
+  final String eventId, runeId, dogId;
 
   @override
-  State<ClainDogScreen> createState() => _ClainDogScreenState();
+  State<ClaimDogScreen> createState() => _ClaimDogScreenState();
 }
 
-class _ClainDogScreenState extends State<ClainDogScreen> {
+class _ClaimDogScreenState extends State<ClaimDogScreen> {
   bool _isLoading = false;
   List<Map<String, String>> _dogsList = [];
-
+  TextEditingController dogNameController = TextEditingController();
+  TextEditingController dogBreedController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final DatabaseReference _database = FirebaseDatabase.instanceFor(
     app: Firebase.app(),
@@ -67,12 +74,10 @@ class _ClainDogScreenState extends State<ClainDogScreen> {
 
   // Method to add a new dog
   Future<void> _addDog(BuildContext context) async {
-    TextEditingController dogNameController = TextEditingController();
-    TextEditingController dogBreedController = TextEditingController();
     XFile? image;
     String imageUrl = '';
     bool isLoading = false;
-
+    final formKey = GlobalKey<FormState>();
     await showDialog(
       context: context,
       builder: (context) {
@@ -84,14 +89,18 @@ class _ClainDogScreenState extends State<ClainDogScreen> {
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  TextField(
-                    controller: dogNameController,
-                    decoration: const InputDecoration(labelText: 'Dog Name'),
-                  ),
-                  const SizedBox(height: 10),
-                  TextField(
-                    controller: dogBreedController,
-                    decoration: const InputDecoration(labelText: 'Dog Breed'),
+                  Form(
+                    key: formKey,
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter a dog name';
+                        }
+                        return null;
+                      },
+                      controller: dogNameController,
+                      decoration: const InputDecoration(labelText: 'Dog Name'),
+                    ),
                   ),
                   const SizedBox(height: 10),
                   ElevatedButton.icon(
@@ -132,53 +141,49 @@ class _ClainDogScreenState extends State<ClainDogScreen> {
                   onPressed: () => Navigator.of(context).pop(),
                 ),
                 TextButton(
-                  child: const Text('Save'),
-                  onPressed: () async {
-                    if (dogNameController.text.isNotEmpty &&
-                        dogBreedController.text.isNotEmpty &&
-                        image != null) {
-                      setState(() {
-                        isLoading =
-                            true; // Show loading indicator when save starts
-                      });
+                    child: const Text('Save'),
+                    onPressed: () async {
+                      if (formKey.currentState!.validate()) {
+                        setState(() {
+                          isLoading = true;
+                        });
 
-                      // Upload image to Firebase Storage and get the URL
-                      String dogId = const Uuid().v4();
-                      String uid = _auth.currentUser!.uid;
-                      Reference ref = _storage.ref().child('dogs/$uid/$dogId');
-                      await ref.putFile(File(image!.path));
-                      imageUrl = await ref.getDownloadURL();
+                        String dogId = const Uuid().v4();
+                        String uid = _auth.currentUser!.uid;
+                        String? imageUrl;
 
-                      // Save dog data to Firebase Realtime Database
-                      await _database
-                          .child('Users')
-                          .child(uid)
-                          .child('MyDogs')
-                          .child(dogId)
-                          .set({
-                        'name': dogNameController.text,
-                        'breed': dogBreedController.text,
-                        'imageUrl': imageUrl,
-                      });
+                        if (image != null) {
+                          Reference ref =
+                              _storage.ref().child('dogs/$uid/$dogId');
+                          await ref.putFile(File(image!.path));
+                          imageUrl = await ref.getDownloadURL();
+                        }
 
-                      setState(() {
-                        _dogsList.add({
-                          'id': dogId,
+                        await _database
+                            .child('Users')
+                            .child(uid)
+                            .child('MyDogs')
+                            .child(dogId)
+                            .set({
                           'name': dogNameController.text,
                           'breed': dogBreedController.text,
                           'imageUrl': imageUrl,
                         });
-                        isLoading =
-                            false; // Hide loading indicator when save completes
-                      });
 
-                      // Reload the dog list to reflect the new addition
-                      await _fetchDogs(uid);
+                        setState(() {
+                          _dogsList.add({
+                            'id': dogId,
+                            'name': dogNameController.text,
+                            'breed': dogBreedController.text,
+                            'imageUrl': imageUrl ?? '',
+                          });
+                          isLoading = false;
+                        });
 
-                      Navigator.of(context).pop();
-                    }
-                  },
-                ),
+                        await _fetchDogs(uid);
+                        Navigator.of(context).pop();
+                      }
+                    }),
               ],
             );
           },
@@ -302,13 +307,52 @@ class _ClainDogScreenState extends State<ClainDogScreen> {
     );
   }
 
+  void askImageUpload(BuildContext context, String dogId, String dogName,
+      String dogBreed, String imageUrl) async {
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Do you want to claim with dog image'),
+              content: const SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(height: 10),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('No'),
+                  onPressed: () {
+                    _claimDog(dogId, dogName, dogBreed, imageUrl);
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: const Text('Yes'),
+                  onPressed: () async {
+                    _claimDog(dogId, dogName, dogBreed, imageUrl);
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
 // Method to claim the dog
   Future<void> _claimDog(
       String dogId, String dogName, String dogBreed, String imageUrl) async {
     String uid = _auth.currentUser!.uid;
 
     try {
-      // Update the 'claimed' field to true in the 'MyDogs' node for the current user
       await _database
           .child('Users')
           .child(uid)
@@ -318,14 +362,31 @@ class _ClainDogScreenState extends State<ClainDogScreen> {
         'claimed': true,
       });
 
+      _database
+          .child('Events')
+          .child(widget.eventId)
+          .child('Runes')
+          .child(widget.runeId)
+          .child('DogList')
+          .child(widget.dogId)
+          .update(
+        {'dogName': dogName, 'imgUrl': imageUrl, 'claimed': true},
+      );
+      _database
+          .child('Users')
+          .child(uid)
+          .child('Events')
+          .child(widget.eventId)
+          .child('Runes')
+          .child(widget.runeId)
+          .child('DogList')
+          .child(widget.dogId)
+          .update(
+        {'dogName': dogName, 'imgUrl': imageUrl, 'claimed': true},
+      );
+
       // Add the dog to the 'ClaimedDogs' node with the provided details
-      await _database.child('ClaimedDogs').child(dogId).set({
-        'owner': _auth.currentUser!.displayName ?? '',
-        'name': dogName,
-        'breed': dogBreed,
-        'imageUrl': imageUrl,
-        'claimedBy': uid, // Optional: Add the user ID who claimed the dog
-      });
+
       Utils.toastMessage("Dog claimed successfully", Colors.green);
       // After successfully claiming, navigate to ClaimSuccessfullyScreen
       Navigator.push(
@@ -351,52 +412,46 @@ class _ClainDogScreenState extends State<ClainDogScreen> {
                     child: Stack(
                       children: [
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: ListTile(
-                            leading: dog['imageUrl'] == null
-                                ? const Center(
-                                    child: CircularProgressIndicator())
-                                : Image.network(
-                                    dog['imageUrl']!,
-                                    width: 70.w,
-                                    height: 70.h,
-                                    fit: BoxFit.cover,
-                                    loadingBuilder:
-                                        (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return const Center(
-                                          child: CircularProgressIndicator());
-                                    },
-                                  ),
-                            title: Text(
-                              dog['name']!,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: "Poppins",
-                                  fontSize: 16.sp),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          right: 225.w,
-                          top: 25.h,
-                          child: IconButton(
-                            icon: const Icon(Icons.edit, color: Colors.red),
-                            onPressed: () {
-                              _editDog(context, dog['id']!, dog['name']!,
-                                  dog['imageUrl']!, dog['breed']!);
-                            },
-                          ),
-                        ),
-                        Positioned(
-                          left: 225.w,
-                          top: 20.h,
-                          child: FollowButton(
-                            title: "Claim",
-                            onPress: () {
-                              _claimDog(dog['id']!, dog['name']!, dog['breed']!,
-                                  dog['imageUrl']!); // Claim the dog by updating the database
-                            },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              if (dog['imageUrl'] != '')
+                                Image.network(
+                                  dog['imageUrl']!,
+                                  width: 70.w,
+                                  height: 70.h,
+                                  fit: BoxFit.cover,
+                                  loadingBuilder:
+                                      (context, child, loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return const Center(
+                                        child: CircularProgressIndicator());
+                                  },
+                                ),
+                              Text(
+                                dog['name']!,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: "Poppins",
+                                    fontSize: 16.sp),
+                              ),
+                              FollowButton(
+                                title: "Claim",
+                                onPress: () {
+                                  dog['imageUrl'] == null ||
+                                          dog['imageUrl'] == ''
+                                      ? _claimDog(dog['id']!, dog['name']!,
+                                          dog['breed']!, dog['imageUrl']!)
+                                      : askImageUpload(
+                                          context,
+                                          dog['id']!,
+                                          dog['name']!,
+                                          dog['breed']!,
+                                          dog['imageUrl']!,
+                                        );
+                                },
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -495,7 +550,7 @@ class _ClainDogScreenState extends State<ClainDogScreen> {
                       height: 5.h,
                     ),
                     Text(
-                      "Upload your dog picture",
+                      "Upload your dog",
                       style: TextStyle(
                         fontSize: 14.h,
                         fontWeight: FontWeight.bold,

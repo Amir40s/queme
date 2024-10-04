@@ -20,24 +20,24 @@ class UpcomingButton extends StatelessWidget {
     return InkWell(
       onTap: onPress,
       child: Container(
+        margin: EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
           color: Colors.green[100],
         ),
-        height: size.height * 0.039,
         width: size.width * 0.3,
         child: Center(
           child: loading
               ? const CircularProgressIndicator(
-            color: Colors.white,
-          )
+                  color: Colors.white,
+                )
               : Text(
-            title,
-            style:  TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w700,
-                color: Colors.green[700],
-                fontFamily: 'Palanquin Dark'),
-          ),
+                  title,
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.green[700],
+                      fontFamily: 'Palanquin Dark'),
+                ),
         ),
       ),
     );

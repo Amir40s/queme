@@ -229,7 +229,6 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
   // Build Add Card Container if No Card is Saved
   Widget _buildAddCardContainer() {
     return Container(
-      height: 120.h,
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.r),
@@ -304,7 +303,6 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
   // Build a Single Payment Method Option
   Widget _buildPaymentMethodOption(String method, String assetPath) {
     return Container(
-      height: 145.h,
       width: 162.w,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
@@ -321,12 +319,12 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
             },
             child: Card(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.r),
+                borderRadius: BorderRadius.circular(30),
               ),
               elevation: 3,
               child: Padding(
                 padding: EdgeInsets.all(15.0.h),
-                child: SvgPicture.asset(assetPath, height: 18.h, width: 18.w),
+                child: SvgPicture.asset(assetPath, height: 18, width: 18),
               ),
             ),
           ),

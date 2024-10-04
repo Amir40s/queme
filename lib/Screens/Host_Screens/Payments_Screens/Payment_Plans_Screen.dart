@@ -31,166 +31,170 @@ class _PaymentPlansScreenState extends State<PaymentPlansScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding:  EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                   SizedBox(width: 20.w),
-                   Text(
-                    "Plans",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontFamily: "Palanquin Dark",
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.bold,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    SizedBox(width: 20.w),
+                    Text(
+                      "Plans",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "Palanquin Dark",
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              Padding(
-                padding:  EdgeInsets.symmetric(vertical: 10.h),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    color: Colors.grey.shade300,
-                  ),
-                  child: Padding(
-                    padding:  EdgeInsets.symmetric(horizontal: 25.h, vertical: 10.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                         Text(
-                          "Monthly Plan",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: "Poppins",
-                            fontSize: 24.sp,
-                          ),
-                        ),
-                         SizedBox(height: 10.h),
-                         Text(
-                          "Host up to 6 events per month",
-                          style: TextStyle(
-                            fontFamily: "Poppins",
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                         SizedBox(height: 10.h),
-                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Event Amount",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontFamily: "Poppins",
-                                fontSize: 16.sp,
-                              ),
+                  ],
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10.h),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: Colors.grey.shade300,
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 25.h, vertical: 10.w),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Monthly Plan",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontFamily: "Poppins",
+                              fontSize: 24.sp,
                             ),
-                            Text(
-                              "\$400",
-                              style: TextStyle(
-                                fontFamily: "Poppins",
-                                fontSize: 20.sp,
-                                color: AppColors.buttonColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          child: RoundButton(
-                            title: "Purchase Plan",
-                            onPress: () {
-                              _navigateToPurchasePlan(
-                                "Monthly Plan",
-                                "Host up to 6 events per month",
-                                400,
-                              );
-                            },
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 10.h),
+                          Text(
+                            "Host up to 6 events per month",
+                            style: TextStyle(
+                              fontFamily: "Poppins",
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 10.h),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Event Amount",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: "Poppins",
+                                  fontSize: 16.sp,
+                                ),
+                              ),
+                              Text(
+                                "\$400",
+                                style: TextStyle(
+                                  fontFamily: "Poppins",
+                                  fontSize: 20.sp,
+                                  color: AppColors.buttonColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            child: RoundButton(
+                              title: "Purchase Plan",
+                              onPress: () {
+                                _navigateToPurchasePlan(
+                                  "Monthly Plan",
+                                  "Host up to 6 events per month",
+                                  400,
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              // Similarly for Yearly Plan and LifeTime Plan
-              Padding(
-                padding:  EdgeInsets.symmetric(vertical: 10.h),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30.r),
-                    color: Colors.grey.shade300,
-                  ),
-                  child: Padding(
-                    padding:  EdgeInsets.symmetric(horizontal: 25.h, vertical: 10.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                         Text(
-                          "Yearly Plan",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: "Poppins",
-                            fontSize: 24.sp,
-                          ),
-                        ),
-                         SizedBox(height: 10.h),
-                         Text(
-                          "Host up to 80 events per month",
-                          style: TextStyle(
-                            fontFamily: "Poppins",
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                         SizedBox(height: 10.h),
-                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Event Amount",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontFamily: "Poppins",
-                                fontSize: 16.sp,
-                              ),
+                // Similarly for Yearly Plan and LifeTime Plan
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10.h),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30.r),
+                      color: Colors.grey.shade300,
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 25.h, vertical: 10.w),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Yearly Plan",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontFamily: "Poppins",
+                              fontSize: 24.sp,
                             ),
-                            Text(
-                              "\$5000",
-                              style: TextStyle(
-                                fontFamily: "Poppins",
-                                fontSize: 20.sp,
-                                color: AppColors.buttonColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding:  EdgeInsets.symmetric(vertical: 15.h),
-                          child: RoundButton(
-                            title: "Purchase Plan",
-                            onPress: () {
-                              _navigateToPurchasePlan(
-                                "Yearly Plan",
-                                "Host up to 80 events per month",
-                                1400,
-                              );
-                            },
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 10.h),
+                          Text(
+                            "Host up to 80 events per month",
+                            style: TextStyle(
+                              fontFamily: "Poppins",
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 10.h),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Event Amount",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: "Poppins",
+                                  fontSize: 16.sp,
+                                ),
+                              ),
+                              Text(
+                                "\$5000",
+                                style: TextStyle(
+                                  fontFamily: "Poppins",
+                                  fontSize: 20.sp,
+                                  color: AppColors.buttonColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 15.h),
+                            child: RoundButton(
+                              title: "Purchase Plan",
+                              onPress: () {
+                                _navigateToPurchasePlan(
+                                  "Yearly Plan",
+                                  "Host up to 80 events per month",
+                                  1400,
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

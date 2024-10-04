@@ -83,18 +83,13 @@ class _LoginScreenState extends State<LoginScreen> {
   // Save or update user data to Firebase Realtime Database
   Future<void> _saveUserDataToDatabase(User? user, String displayName) async {
     if (user != null) {
-      // First, fetch the 'MyDogs' data
-      DatabaseEvent event = await _database
-          .child('Users')
-          .child(user.uid)
-          .child('MyDogs')
-          .once(); // Get the data once
+      DatabaseEvent event =
+          await _database.child('Users').child(user.uid).child('MyDogs').once();
 
       Map<dynamic, dynamic>? data =
           event.snapshot.value as Map<dynamic, dynamic>?;
       Map<String, dynamic> myDogs = {};
 
-      // If there's data, process it into the format you want
       if (data != null) {
         data.forEach((key, value) {
           myDogs[key] = {

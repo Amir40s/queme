@@ -467,6 +467,7 @@ class EventsScreen extends StatelessWidget {
                                           entry.value['runeStartDate'],
                                       'runeLocation':
                                           entry.value['runeLocation'],
+                                      'eventId': entry.value['eventId'],
                                     })
                                 .toList();
 
@@ -486,6 +487,7 @@ class EventsScreen extends StatelessWidget {
                                           runeName: rune['runeName'],
                                           runeLocation: rune['runeLocation'],
                                           startingDate: rune['runeStartDate'],
+                                          eventId: rune['eventId'] ?? '',
                                         ),
                                       ),
                                     );
@@ -543,12 +545,14 @@ class EventsScreen extends StatelessWidget {
                                               provider.followingRunsIds
                                                       .contains(rune['runeId'])
                                                   ? provider.unfollowRuns(
-                                                      rune['runeId'])
+                                                      rune['runeId'],
+                                                      rune['eventId'])
                                                   : provider.followRune(
                                                       rune['runeId'],
                                                       rune['runeName'],
                                                       rune['runeLocation'],
-                                                      rune['runeStartDate']);
+                                                      rune['runeStartDate'],
+                                                      rune['eventId']);
                                             },
                                           ),
                                         ],
@@ -587,7 +591,7 @@ class EventsScreen extends StatelessWidget {
         SizedBox(width: 5.w),
         Text(
           text,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
         ),
       ],
     );

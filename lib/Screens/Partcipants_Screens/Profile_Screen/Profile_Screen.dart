@@ -47,7 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     _fetchUserData(); // Fetch user data on initialization
     _fetchDogs(_auth.currentUser!.uid);
-    _editProfileImage();
+    // _editProfileImage();
     _fetchFollowingEvents();
     _fetchFollowingRuns();
   }
@@ -73,6 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             loadedRuns.add({
               'runId': key, // Adjusted to match your structure
               'runName': value['runeName'],
+              'eventId': value['eventId'],
             });
           });
           print("Fetched runs: $loadedRuns"); // Debugging
@@ -372,7 +373,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         if (newImage != null)
                           Image.file(File(newImage!.path), height: 100)
                         else
-                          Image.network(currentImageUrl, height: 100),
+                          currentImageUrl != ''
+                              ? Image.network(currentImageUrl, height: 100)
+                              : SizedBox.shrink()
                       ],
                     ),
               actions: isLoading
@@ -545,9 +548,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(20),
                           child: ListTile(
-                            leading: dog['imageUrl'] == null
-                                ? const Center(
-                                    child: CircularProgressIndicator())
+                            leading: dog['imageUrl'] == ''
+                                ? const SizedBox.shrink()
                                 : Image.network(
                                     dog['imageUrl']!,
                                     width: 70.w,
@@ -1008,7 +1010,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           onPress: () {
                                             Provider.of<EventProvider>(context,
                                                     listen: false)
-                                                .unfollowRuns(run['runId']);
+                                                .unfollowRuns(run['runId'],
+                                                    run['eventId']);
                                             _unfollowRuns(run['runId']);
                                           },
                                         ),

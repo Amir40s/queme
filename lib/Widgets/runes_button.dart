@@ -20,24 +20,24 @@ class RunesButton extends StatelessWidget {
     return InkWell(
       onTap: onPress,
       child: Container(
+        padding: EdgeInsets.symmetric(vertical: 5.h),
         decoration: BoxDecoration(
           color: AppColors.buttonColor,
         ),
-        height: 34.h,
         width: 350.w,
         child: Center(
           child: loading
               ? const CircularProgressIndicator(
-            color: Colors.white,
-          )
+                  color: Colors.white,
+                )
               : Text(
-            title,
-            style:  TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.bold,
-                color: AppColors.whiteColor,
-                fontFamily: 'Palanquin Dark'),
-          ),
+                  title,
+                  style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.whiteColor,
+                      fontFamily: 'Palanquin Dark'),
+                ),
         ),
       ),
     );

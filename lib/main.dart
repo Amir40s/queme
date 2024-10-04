@@ -1,10 +1,9 @@
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart'; // Add this import
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:queme/Screens/Notifications/send_notification.dart';
 import 'package:queme/Widgets/colors.dart';
 import 'package:queme/provider/eventProvider.dart';
 import 'Screens/Auth/Splash_Screen.dart';
@@ -49,10 +48,10 @@ class MyApp extends StatelessWidget {
               scaffoldBackgroundColor: AppColors.whiteColor,
               fontFamily: 'Palanquin Dark',
               textTheme: TextTheme(
-                bodyLarge: TextStyle(fontSize: 18.0.sp),
-                bodyMedium: TextStyle(fontSize: 16.0.sp),
-                displayLarge: TextStyle(fontSize: 30.0.sp),
-                displayMedium: TextStyle(fontSize: 24.0.sp),
+                bodyLarge: TextStyle(fontSize: 18.0),
+                bodyMedium: TextStyle(fontSize: 16.0),
+                displayLarge: TextStyle(fontSize: 30.0),
+                displayMedium: TextStyle(fontSize: 24.0),
               ),
               buttonTheme: const ButtonThemeData(
                 buttonColor: Colors.red,

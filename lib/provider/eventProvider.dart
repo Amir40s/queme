@@ -9,8 +9,10 @@ class EventProvider with ChangeNotifier {
   List<String> _followingEventIds = [];
   bool _isLoading = false;
   List<String> _followingRunsIds = [];
+  String _token = '';
 
   List<String> get followingEventIds => _followingEventIds;
+  String get token => _token;
   List<String> get followingRunsIds => _followingRunsIds;
   bool get isLoading => _isLoading;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -75,6 +77,12 @@ class EventProvider with ChangeNotifier {
             .child("followingEvents")
             .child(eventId)
             .remove();
+        _database
+            .child("Events")
+            .child(eventId)
+            .child('Followers')
+            .child(currentUser.uid)
+            .remove();
         Utils.toastMessage("Unfollowed event successfully", Colors.green);
         followingEventIds.remove(eventId);
         _isLoading = false;
@@ -86,7 +94,11 @@ class EventProvider with ChangeNotifier {
   }
 
   Future<void> followEvent(
-      String id, String name, String date, String location) async {
+    String id,
+    String name,
+    String date,
+    String location,
+  ) async {
     try {
       _isLoading = true;
       User? currentUser = _auth.currentUser;
@@ -102,6 +114,15 @@ class EventProvider with ChangeNotifier {
           'eventLocation': location,
           'eventStartDate': date,
         });
+        _database
+            .child("Events")
+            .child(id)
+            .child('Followers')
+            .child(currentUser.uid)
+            .set({
+          'token': _token,
+          'id': currentUser.uid,
+        });
         _isLoading = false;
         followingEventIds.add(id);
         notifyListeners();
@@ -113,48 +134,74 @@ class EventProvider with ChangeNotifier {
   }
 
   Future<void> followRune(String runeId, String runeName, String runeStartDate,
-      String runeLocation) async {
+      String runeLocation, String eventId) async {
     try {
       User? currentUser = _auth.currentUser;
       if (currentUser != null) {
+        String userId = currentUser.uid;
+        String? userName = currentUser.displayName ?? currentUser.email;
+
+        // Add rune to user's following list
         await _database
             .child("Users")
-            .child(currentUser.uid)
+            .child(userId)
             .child("followingRunes")
             .child(runeId)
             .set({
           'runeId': runeId,
           'runeName': runeName,
           'runeStartDate': runeStartDate,
-          'runeLocation': runeLocation
+          'runeLocation': runeLocation,
+          'eventId': eventId,
         });
+
+        // Add user to the rune's followers list
+        await _database
+            .child("Events")
+            .child(eventId)
+            .child("Runes")
+            .child(runeId)
+            .child('Followers')
+            .child(userId) // Use the userId as the key
+            .set({
+          'token': _token,
+          'id': userId,
+        });
+
         _followingRunsIds.add(runeId);
         notifyListeners();
-        Utils.toastMessage("You are now following run $runeName", Colors.green);
-        _database.child("Events").child("followingRunes").child(runeId).set({
-          'runeId': runeId,
-          'runeName': runeName,
-          'runeStartDate': runeStartDate,
-          'runeLocation': runeLocation
-        });
+        Utils.toastMessage(
+            "You are now following rune $runeName", Colors.green);
       }
     } on FirebaseException catch (e) {
       Utils.toastMessage("Error: ${e.message}", Colors.red);
     }
   }
 
-  Future<void> unfollowRuns(String id) async {
+  Future<void> unfollowRuns(String id, String eventId) async {
     User? currentUser = _auth.currentUser;
     if (currentUser != null) {
       String uid = currentUser.uid;
 
       try {
+        // Remove the rune from the user's following list
         await _database
             .child("Users")
             .child(uid)
             .child("followingRunes")
             .child(id)
             .remove();
+
+        // Remove the user from the rune's followers list
+        await _database
+            .child("Events")
+            .child(eventId)
+            .child("Runes")
+            .child(id)
+            .child('Followers')
+            .child(uid) // Use the userId as the key
+            .remove();
+
         _followingRunsIds.remove(id);
         notifyListeners();
         Utils.toastMessage("Unfollowed run successfully", Colors.green);
@@ -162,6 +209,27 @@ class EventProvider with ChangeNotifier {
         Utils.toastMessage("Error: ${e.message}", Colors.red);
       }
     }
+  }
+
+  void fetchUserToken() async {
+    User? currentUser = _auth.currentUser;
+
+    if (currentUser != null) {
+      String uid = currentUser.uid;
+
+      try {
+        DataSnapshot snapshot =
+            await _database.child("Users").child(uid).child("token").get();
+
+        if (snapshot.exists) {
+          _token = (snapshot.value as String?)!;
+        }
+        notifyListeners();
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
   }
 
   void changeUserType(String type) {

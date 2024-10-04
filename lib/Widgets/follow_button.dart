@@ -27,16 +27,16 @@ class FollowButton extends StatelessWidget {
         child: Center(
           child: loading
               ? const CircularProgressIndicator(
-            color: Colors.white,
-          )
+                  color: Colors.white,
+                )
               : Text(
-            title,
-            style:  TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w700,
-                color: AppColors.whiteColor,
-                fontFamily: 'Palanquin Dark'),
-          ),
+                  title,
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.whiteColor,
+                      fontFamily: 'Palanquin Dark'),
+                ),
         ),
       ),
     );

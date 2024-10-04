@@ -106,14 +106,13 @@ class _HostDashboardState extends State<HostDashboard> {
             ),
             SizedBox(height: 20.h),
             Container(
-              height: 48.h,
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10.r),
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.5.sp),
+                    color: Colors.grey.withOpacity(0.5),
                     spreadRadius: 2,
                     blurRadius: 7,
                     offset: const Offset(0, 3),
@@ -129,7 +128,7 @@ class _HostDashboardState extends State<HostDashboard> {
                     border: InputBorder.none,
                     hintText: "Search Events",
                     hintStyle: TextStyle(
-                      fontSize: 12.sp,
+                      fontSize: 12,
                       color: Colors.grey,
                       fontFamily: 'Poppins',
                     ),
