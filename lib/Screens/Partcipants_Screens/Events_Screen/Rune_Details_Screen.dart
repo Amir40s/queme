@@ -137,24 +137,29 @@ class _RuneDetailScreenState extends State<RuneDetailScreen>
                             builder: (context, snapshot) {
                               if (snapshot.hasData &&
                                   snapshot.data!.snapshot.value != null) {
-                                List<dynamic> dataList = snapshot
-                                    .data!.snapshot.value as List<dynamic>;
+                                // Cast the snapshot value to Map instead of List
+                                Map<dynamic, dynamic> dataMap = snapshot.data!
+                                    .snapshot.value as Map<dynamic, dynamic>;
+
+                                // Convert the map to a list of dogs
                                 List<Map<String, dynamic>> dogs =
-                                    dataList.asMap().entries.map((entry) {
+                                    dataMap.entries.map((entry) {
                                   var dog =
                                       entry.value as Map<dynamic, dynamic>;
                                   return {
                                     'id': entry.key
-                                        .toString(), // Use the index as the ID
-                                    'breed': dog['breed'],
-                                    'competitorName': dog['competitorName'],
-                                    'dogName': dog['dogName'],
-                                    'ownerName': dog['ownerName'],
-                                    'imageUrl': dog['imageUrl'] ?? '',
-                                    'claimed': dog['claimed'] ?? '',
+                                        .toString(), // Firebase key as the ID
+                                    'breed': dog['breed'] ?? '',
+                                    'competitorName':
+                                        dog['competitorName'] ?? '',
+                                    'dogName': dog['dogName'] ?? '',
+                                    'ownerName': dog['ownerName'] ?? '',
+                                    'imageUrl': dog['imageUrl'] ??
+                                        '', // Handle missing imageUrl
+                                    'claimed': dog['claimed'] ??
+                                        false, // Ensure claimed is a boolean
                                   };
                                 }).toList();
-
                                 return dogs.isNotEmpty
                                     ? ListView.builder(
                                         itemCount: dogs.length,
@@ -371,31 +376,42 @@ class _RuneDetailScreenState extends State<RuneDetailScreen>
                             builder: (context, snapshot) {
                               if (snapshot.hasData &&
                                   snapshot.data!.snapshot.value != null) {
-                                List<dynamic> dataList = snapshot
-                                    .data!.snapshot.value as List<dynamic>;
-                                List<Map<String, dynamic>> dogs = dataList
-                                    .asMap()
+                                // Cast snapshot value to Map instead of List
+                                Map<dynamic, dynamic> dataMap = snapshot.data!
+                                    .snapshot.value as Map<dynamic, dynamic>;
+
+                                // Convert the map to a list of dogs
+                                List<Map<String, dynamic>> dogs = dataMap
                                     .entries
-                                    .map((entry) {
-                                      var dog =
-                                          entry.value as Map<dynamic, dynamic>;
-                                      return {
-                                        'id': entry.key.toString(),
-                                        'imgUrl': dog['imgUrl'] ?? '',
-                                        'breed': dog['breed'],
-                                        'competitorName': dog['competitorName'],
-                                        'dogName': dog['dogName'],
-                                        'ownerName': dog['ownerName'],
-                                        'claimed': dog['claimed'] ??
-                                            false, // Ensure claimed is a boolean
-                                      };
-                                    })
-                                    .where((dog) => dog['claimed'] == true)
-                                    .toList(); // Filter only claimed dogs
+                                    .map(
+                                      (entry) {
+                                        var dog = entry.value
+                                            as Map<dynamic, dynamic>;
+                                        return {
+                                          'id': entry
+                                              .key, // Firebase's unique key as the dog's ID
+                                          'breed': dog['breed'],
+                                          'competitorName':
+                                              dog['competitorName'],
+                                          'dogName': dog['dogName'],
+                                          'ownerName': dog['ownerName'],
+                                          'imgUrl': dog['imgUrl'] ??
+                                              '', // Handle missing image URLs
+                                          'claimed': dog['claimed'] ??
+                                              false, // Ensure claimed is a boolean
+                                        };
+                                      },
+                                    )
+                                    .where((dog) =>
+                                        dog['claimed'] ==
+                                        true) // Filter dogs that are claimed
+                                    .toList();
 
                                 return dogs.isNotEmpty
                                     ? CompletedDogListWidget(
                                         list: dogs,
+                                        eventId: widget.eventId,
+                                        runeId: widget.runeId,
                                       )
                                     : const Padding(
                                         padding: EdgeInsets.only(top: 15),

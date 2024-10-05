@@ -180,6 +180,7 @@ class _HostRunsScreenState extends State<HostRunsScreen>
             "ownerName": row[2]?.value?.toString() ?? "",
             "breed": row[3]?.value?.toString() ?? "",
             "claimed": false,
+            "checkedIn": false,
           };
           dogList.add(dogData);
         }
@@ -187,23 +188,30 @@ class _HostRunsScreenState extends State<HostRunsScreen>
         User? currentUser = _auth.currentUser;
         if (currentUser != null) {
           String uid = currentUser.uid;
-          DatabaseReference ref = _database
-              .child('Users')
-              .child(uid)
-              .child('Events')
-              .child(widget.eventId)
-              .child('Runes')
-              .child(widget.runeId)
-              .child('DogList');
-          DatabaseReference refEvent = _database
-              .child('Events')
-              .child(widget.eventId)
-              .child('Runes')
-              .child(widget.runeId)
-              .child('DogList');
 
-          await ref.set(dogList);
-          await refEvent.set(dogList);
+          for (var dogData in dogList) {
+            DatabaseReference ref = _database
+                .child('Users')
+                .child(uid)
+                .child('Events')
+                .child(widget.eventId)
+                .child('Runes')
+                .child(widget.runeId)
+                .child('DogList')
+                .push(); // Creates a new unique document for each dog
+
+            DatabaseReference refEvent = _database
+                .child('Events')
+                .child(widget.eventId)
+                .child('Runes')
+                .child(widget.runeId)
+                .child('DogList')
+                .push(); // Creates a new unique document for each dog
+
+            await ref.set(dogData);
+            await refEvent.set(dogData);
+          }
+
           Utils.toastMessage("Uploaded Successfully", Colors.green);
         }
       } else {
@@ -280,12 +288,8 @@ class _HostRunsScreenState extends State<HostRunsScreen>
                       return;
                     }
 
-                    DataSnapshot snapshot = await refEvent.get();
-                    List<dynamic> dogList = [];
-
-                    if (snapshot.value != null) {
-                      dogList = List.from(snapshot.value as List<dynamic>);
-                    }
+                    // Create a new unique document for each dog
+                    DatabaseReference newDogRef = refEvent.push();
 
                     Map<String, dynamic> newDog = {
                       'dogName': dogNameC.text,
@@ -293,11 +297,13 @@ class _HostRunsScreenState extends State<HostRunsScreen>
                       'breed': dogBreedC.text ?? '',
                       'competitorName': dogCompetitorC.text ?? '',
                       'claimed': false,
+                      'checkedIn': false,
                     };
-                    dogList.add(newDog);
 
-                    await refEvent.set(dogList);
+                    // Save the new dog data
+                    await newDogRef.set(newDog);
 
+                    // Clear the form fields
                     dogNameC.clear();
                     dogOwnerC.clear();
                     dogBreedC.clear();
@@ -353,23 +359,15 @@ class _HostRunsScreenState extends State<HostRunsScreen>
             onPressed: () {
               sendNotification(context);
             },
-            icon: Icon(
+            icon: const Icon(
               Icons.notifications,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(right: 10.w),
-            child: UpcomingButton(
-              title:
-                  Utils().todayDate() == widget.date ? "Ongoing" : "Upcoming",
-              onPress: () {},
             ),
           ),
         ],
         bottom: TabBar(
           controller: _tabController,
           labelColor: Colors.red,
-          labelStyle: TextStyle(
+          labelStyle: const TextStyle(
               fontSize: 16, fontFamily: "Poppins", fontWeight: FontWeight.bold),
           unselectedLabelColor: Colors.grey,
           indicatorColor: Colors.red,
@@ -400,19 +398,24 @@ class _HostRunsScreenState extends State<HostRunsScreen>
                         builder: (context, snapshot) {
                           if (snapshot.hasData &&
                               snapshot.data!.snapshot.value != null) {
-                            List<dynamic> dataList =
-                                snapshot.data!.snapshot.value as List<dynamic>;
+                            Map<dynamic, dynamic> dataMap = snapshot
+                                .data!.snapshot.value as Map<dynamic, dynamic>;
 
-                            List<Map<String, dynamic>> dogs = dataList
-                                .map((dog) {
+                            // Convert the Map to a List
+                            List<Map<String, dynamic>> dogs = dataMap.entries
+                                .map((entry) {
+                                  var dog = entry.value;
                                   return {
-                                    'id': dog['id'],
+                                    'id': entry
+                                        .key, // Use Firebase's unique key as the dog's ID
                                     'breed': dog['breed'],
                                     'competitorName': dog['competitorName'],
                                     'dogName': dog['dogName'],
                                     'ownerName': dog['ownerName'],
-                                    'claimed': dog['claimed'] ??
-                                        false, // Default to false if not available
+                                    'claimed': dog['claimed'] ?? false,
+                                    'checkedIn': dog['checkedIn'] ?? false,
+                                    'order': dog['order'] ??
+                                        0, // Get the order field
                                   };
                                 })
                                 .where((dog) =>
@@ -420,8 +423,17 @@ class _HostRunsScreenState extends State<HostRunsScreen>
                                     false) // Filter only dogs not claimed
                                 .toList();
 
+                            // Sort the list based on the order
+                            dogs.sort(
+                                (a, b) => a['order'].compareTo(b['order']));
+
                             return dogs.isNotEmpty
-                                ? RunningDogListWidget(dogList: dogs)
+                                ? RunningDogListWidget(
+                                    dogList: dogs,
+                                    eventId: widget.eventId,
+                                    runeId: widget.runeId,
+                                    runeName: widget.runeName,
+                                  )
                                 : const Padding(
                                     padding: EdgeInsets.only(top: 15),
                                     child: Center(child: Text('No Dogs Found')),
@@ -471,35 +483,43 @@ class _HostRunsScreenState extends State<HostRunsScreen>
                   builder: (context, snapshot) {
                     if (snapshot.hasData &&
                         snapshot.data!.snapshot.value != null) {
-                      List<dynamic> dataList =
-                          snapshot.data!.snapshot.value as List<dynamic>;
-                      List<Map<String, dynamic>> dogs = dataList
-                          .asMap()
-                          .entries
+                      // Cast snapshot value to Map instead of List
+                      Map<dynamic, dynamic> dataMap = snapshot
+                          .data!.snapshot.value as Map<dynamic, dynamic>;
+
+                      // Convert the map to a list of dogs
+                      List<Map<String, dynamic>> dogs = dataMap.entries
                           .map((entry) {
                             var dog = entry.value as Map<dynamic, dynamic>;
                             return {
-                              'id': entry.key
-                                  .toString(), // Use the index as the ID
+                              'id': entry
+                                  .key, // Firebase's unique key as the dog's ID
                               'breed': dog['breed'],
                               'competitorName': dog['competitorName'],
                               'dogName': dog['dogName'],
                               'ownerName': dog['ownerName'],
-                              'imgUrl': dog['imgUrl'] ?? '',
+                              'imgUrl': dog['imgUrl'] ??
+                                  '', // Handle missing image URLs
                               'claimed': dog['claimed'] ??
                                   false, // Ensure claimed is a boolean
                             };
                           })
-                          .where((dog) => dog['claimed'] == true)
+                          .where((dog) =>
+                              dog['claimed'] ==
+                              true) // Filter dogs that are claimed
                           .toList();
-
                       return dogs.isNotEmpty
                           ? CompletedDogListWidget(
                               list: dogs,
+                              isEdit: true,
+                              eventId: widget.eventId,
+                              runeId: widget.runeId,
                             )
                           : const Padding(
                               padding: EdgeInsets.only(top: 15),
-                              child: Center(child: Text('No Dogs Found')),
+                              child: Center(
+                                child: Text('No Dogs Found'),
+                              ),
                             );
                     } else {
                       return Center(

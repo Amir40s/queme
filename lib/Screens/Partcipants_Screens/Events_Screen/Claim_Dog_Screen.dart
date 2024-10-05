@@ -307,49 +307,8 @@ class _ClaimDogScreenState extends State<ClaimDogScreen> {
     );
   }
 
-  void askImageUpload(BuildContext context, String dogId, String dogName,
-      String dogBreed, String imageUrl) async {
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: const Text('Do you want to claim with dog image'),
-              content: const SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(height: 10),
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text('No'),
-                  onPressed: () {
-                    _claimDog(dogId, dogName, dogBreed, imageUrl);
-                    Navigator.of(context).pop();
-                  },
-                ),
-                TextButton(
-                  child: const Text('Yes'),
-                  onPressed: () async {
-                    _claimDog(dogId, dogName, dogBreed, imageUrl);
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
 // Method to claim the dog
-  Future<void> _claimDog(
-      String dogId, String dogName, String dogBreed, String imageUrl) async {
+  Future<void> _claimDog(String dogId, String dogName, String dogBreed) async {
     String uid = _auth.currentUser!.uid;
 
     try {
@@ -370,7 +329,7 @@ class _ClaimDogScreenState extends State<ClaimDogScreen> {
           .child('DogList')
           .child(widget.dogId)
           .update(
-        {'dogName': dogName, 'imgUrl': imageUrl, 'claimed': true},
+        {'claimed': true},
       );
       _database
           .child('Users')
@@ -382,7 +341,7 @@ class _ClaimDogScreenState extends State<ClaimDogScreen> {
           .child('DogList')
           .child(widget.dogId)
           .update(
-        {'dogName': dogName, 'imgUrl': imageUrl, 'claimed': true},
+        {'claimed': true},
       );
 
       // Add the dog to the 'ClaimedDogs' node with the provided details
@@ -438,17 +397,8 @@ class _ClaimDogScreenState extends State<ClaimDogScreen> {
                               FollowButton(
                                 title: "Claim",
                                 onPress: () {
-                                  dog['imageUrl'] == null ||
-                                          dog['imageUrl'] == ''
-                                      ? _claimDog(dog['id']!, dog['name']!,
-                                          dog['breed']!, dog['imageUrl']!)
-                                      : askImageUpload(
-                                          context,
-                                          dog['id']!,
-                                          dog['name']!,
-                                          dog['breed']!,
-                                          dog['imageUrl']!,
-                                        );
+                                  _claimDog(
+                                      dog['id']!, dog['name']!, dog['breed']!);
                                 },
                               ),
                             ],

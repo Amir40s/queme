@@ -70,7 +70,16 @@ class NotificationsScreen extends StatelessWidget {
                       snapshot.data!.snapshot.value != null) {
                     Map<dynamic, dynamic> notificationsMap =
                         snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
+
+                    // Convert the map entries to a list
                     List notificationsList = notificationsMap.entries.toList();
+
+                    // Sort the notifications by 'createdAt' in descending order
+                    notificationsList.sort((a, b) {
+                      DateTime dateA = DateTime.parse(a.value['createdAt']);
+                      DateTime dateB = DateTime.parse(b.value['createdAt']);
+                      return dateB.compareTo(dateA); // Newest first
+                    });
 
                     return ListView.builder(
                       itemCount: notificationsList.length,

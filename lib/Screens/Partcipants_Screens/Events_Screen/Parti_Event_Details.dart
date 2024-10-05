@@ -129,6 +129,13 @@ class _PartiEventDetailsState extends State<PartiEventDetails> {
                     ),
                   ],
                 ),
+                SizedBox(height: 15.h),
+                _buildEventDetail("Event Name", widget.eventName),
+                SizedBox(height: 10.h),
+                _buildEventDetail("Starts", widget.eventStartDate),
+                SizedBox(height: 10.h),
+                _buildEventDetail("Location", widget.eventLocation),
+                const SizedBox(height: 20),
                 Text(
                   "Runs",
                   style: TextStyle(
@@ -151,13 +158,6 @@ class _PartiEventDetailsState extends State<PartiEventDetails> {
                         },
                       )
                     : _buildNoRunsWidget(),
-                SizedBox(height: 15.h),
-                _buildEventDetail("Event Name", widget.eventName),
-                SizedBox(height: 10.h),
-                _buildEventDetail("Starts", widget.eventStartDate),
-                SizedBox(height: 10.h),
-                _buildEventDetail("Location", widget.eventLocation),
-                const SizedBox(height: 20),
                 RoundButton(
                   title: provider.followingEventIds.contains(widget.eventId)
                       ? "Unfollow this Event"

@@ -267,7 +267,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   onPressed: () {
                     sendNotification(context);
                   },
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.notifications,
                   ),
                 )
@@ -278,7 +278,83 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Text(
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "Event Name:   ",
+                          style: TextStyle(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Palanquin Dark',
+                          ),
+                        ),
+                        Text(
+                          widget.eventName,
+                          style: TextStyle(
+                            fontSize: 15.sp,
+                            fontFamily: 'Palanquin Dark',
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 5.h),
+                    SizedBox(height: 10.h),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              "Date:   ",
+                              style: TextStyle(
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Palanquin Dark',
+                              ),
+                            ),
+                            Text(
+                              widget.eventStartDate,
+                              style: TextStyle(
+                                fontSize: 15.sp,
+                                fontFamily: 'Palanquin Dark',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10.h),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              "Location:   ",
+                              style: TextStyle(
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Palanquin Dark',
+                              ),
+                            ),
+                            Text(
+                              widget.eventLocation,
+                              style: TextStyle(
+                                fontSize: 15.sp,
+                                fontFamily: 'Palanquin Dark',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                    const Text(
                       "Runs",
                       style: TextStyle(
                           fontSize: 16,
@@ -287,14 +363,14 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                           color: AppColors.buttonColor),
                     ),
                     SizedBox(height: 10.h),
-                    Divider(
+                    const Divider(
                       thickness: 3,
                       color: AppColors.buttonColor,
                     ),
                     runesList.isNotEmpty
                         ? ListView.builder(
                             shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
+                            physics: const NeverScrollableScrollPhysics(),
                             itemCount: runesList.length,
                             itemBuilder: (context, index) {
                               var rune = runesList[index];
@@ -379,8 +455,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                               context: context,
                                               builder: (context) {
                                                 return AlertDialog(
-                                                  title: Text('Are you sure?'),
-                                                  content: Text(
+                                                  title: const Text(
+                                                      'Are you sure?'),
+                                                  content: const Text(
                                                       'This will end the run and delete the rune. Are you sure?'),
                                                   actions: [
                                                     TextButton(
@@ -388,14 +465,15 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                         Navigator.of(context)
                                                             .pop(false);
                                                       },
-                                                      child: Text('Cancel'),
+                                                      child:
+                                                          const Text('Cancel'),
                                                     ),
                                                     TextButton(
                                                       onPressed: () {
                                                         Navigator.of(context)
                                                             .pop(true);
                                                       },
-                                                      child: Text('Yes'),
+                                                      child: const Text('Yes'),
                                                     ),
                                                   ],
                                                 );
@@ -420,79 +498,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               const Center(child: Text('No Runs Created Yet')),
                             ],
                           ),
-                    SizedBox(
-                      height: 20.h,
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          "Event Name:   ",
-                          style: TextStyle(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Palanquin Dark',
-                          ),
-                        ),
-                        Text(
-                          widget.eventName,
-                          style: TextStyle(
-                            fontSize: 15.sp,
-                            fontFamily: 'Palanquin Dark',
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 5.h),
-                    SizedBox(height: 10.h),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              "Date:   ",
-                              style: TextStyle(
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'Palanquin Dark',
-                              ),
-                            ),
-                            Text(
-                              widget.eventStartDate,
-                              style: TextStyle(
-                                fontSize: 15.sp,
-                                fontFamily: 'Palanquin Dark',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10.h),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              "Location:   ",
-                              style: TextStyle(
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'Palanquin Dark',
-                              ),
-                            ),
-                            Text(
-                              widget.eventLocation,
-                              style: TextStyle(
-                                fontSize: 15.sp,
-                                fontFamily: 'Palanquin Dark',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
                   ],
                 ),
               ),

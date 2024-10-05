@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:queme/Screens/Host_Screens/Host_Dashboard/host_bottom_nav.dart';
 import 'package:queme/Widgets/colors.dart';
 import 'package:queme/Widgets/round_button.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart'; // Import ScreenUtil
@@ -174,7 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (userType == 'Host' && paymentStatus == 'approved') {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const HostDashboard()),
+            MaterialPageRoute(builder: (context) => const HostBottomNav()),
           );
         } else if (userType == 'Participant') {
           Navigator.pushReplacement(
