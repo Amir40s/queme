@@ -16,7 +16,6 @@ import '../../../Utils/Utils.dart';
 import '../../../Widgets/Unfollow_Button.dart';
 import '../../../Widgets/colors.dart';
 import '../../Auth/Login_Screen.dart';
-import '../../Host_Screens/Host_Dashboard/Host_Dashboard.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -430,10 +429,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // Method to edit the user's profile picture
-  Future<void> _editProfileImage() async {
+  Future<void> _editProfileImage(BuildContext context) async {
     XFile? image;
-    bool isUploading = false; // New state to track uploading
+    bool isUploading = false;
 
     await showDialog(
       context: context,
@@ -451,8 +449,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onPressed: () async {
                       image = await ImagePicker()
                           .pickImage(source: ImageSource.camera);
-                      setState(
-                          () {}); // Update the dialog UI to show the selected image
+                      setState(() {}); // Update UI to show the selected image
                     },
                   ),
                   ElevatedButton.icon(
@@ -461,12 +458,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onPressed: () async {
                       image = await ImagePicker()
                           .pickImage(source: ImageSource.gallery);
-                      setState(
-                          () {}); // Update the dialog UI to show the selected image
+                      setState(() {}); // Update UI to show the selected image
                     },
                   ),
                   const SizedBox(height: 10),
-                  // Display the selected image
                   if (image != null)
                     Image.file(
                       File(image!.path),
@@ -474,7 +469,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       fit: BoxFit.cover,
                     ),
                   const SizedBox(height: 10),
-                  // Show CircularProgressIndicator if uploading
                   if (isUploading)
                     const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -496,33 +490,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onPressed: () async {
                     if (image != null) {
                       setState(() {
-                        isUploading = true; // Start loading indicator
+                        isUploading = true;
                       });
 
                       String uid = _auth.currentUser!.uid;
-                      Reference ref =
-                          _storage.ref().child('profileImages/$uid');
-                      await ref.putFile(File(image!.path));
-                      String newImageUrl = await ref.getDownloadURL();
+                      final url = await Utils()
+                          .uploadFileToCloudinary(image!.path, context);
 
-                      // Update profile image URL in Realtime Database
+                      // Update profile image URL globally via Provider
+                      Provider.of<ProfileProvider>(context, listen: false)
+                          .updateProfileImage(url);
+
                       await _database.child('Users').child(uid).update({
-                        'profileImageUrl': newImageUrl,
+                        'profileImageUrl': url,
                       });
 
-                      // Update the local UI on the profile page
                       setState(() {
-                        _profileImageUrl = newImageUrl;
-                        isUploading = false; // Stop loading indicator
+                        isUploading = false;
                       });
 
-                      Navigator.of(context)
-                          .pop(); // Close dialog after upload completes
-
-                      // Call setState in the profile page to update the image
-                      setState(() {
-                        _profileImageUrl = newImageUrl;
-                      });
+                      Navigator.of(context).pop();
                     }
                   },
                 ),
@@ -735,39 +722,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
           child: Column(
             children: [
-              Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(70),
-                    child: _profileImageUrl.contains('assets')
-                        ? Image.asset(_profileImageUrl,
-                            width: 140.w, height: 140.h)
-                        : Image.network(
-                            _profileImageUrl,
-                            width: 140.w,
-                            height: 140.h,
-                            fit: BoxFit.cover,
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            },
-                          ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.edit,
-                        color: Colors.black,
-                        size: 38.h,
-                      ),
-                      onPressed: _editProfileImage,
+              Consumer<ProfileProvider>(builder: (context, provider, child) {
+                return Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(70),
+                      child: provider.profileImageUrl.contains('assets')
+                          ? Image.asset(provider.profileImageUrl,
+                              width: 140.w, height: 140.h)
+                          : Image.network(
+                              provider.profileImageUrl,
+                              width: 140.w,
+                              height: 140.h,
+                              fit: BoxFit.cover,
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              },
+                            ),
                     ),
-                  ),
-                ],
-              ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.edit,
+                          color: Colors.black,
+                          size: 38.h,
+                        ),
+                        onPressed: () {
+                          _editProfileImage(context);
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              }),
               SizedBox(height: 20.h),
               Text(_nameController.text,
                   style:
@@ -1032,5 +1024,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
     );
+  }
+}
+
+class ProfileProvider with ChangeNotifier {
+  String _profileImageUrl = 'assets/images/women1.png'; // Default profile image
+
+  String get profileImageUrl => _profileImageUrl;
+
+  void updateProfileImage(String newImageUrl) {
+    _profileImageUrl = newImageUrl;
+    notifyListeners(); // Notify listeners about the change
   }
 }

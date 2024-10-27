@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -21,7 +20,6 @@ class RunningDogListWidget extends StatelessWidget {
     required this.runeId,
     required this.runeName,
   }) {
-    // Initialize the ValueNotifier with the dogList
     _dogListNotifier.value = dogList;
   }
 

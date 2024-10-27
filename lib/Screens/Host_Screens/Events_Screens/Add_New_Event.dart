@@ -154,6 +154,8 @@ class _AddNewEventState extends State<AddNewEvent> {
                           'eventName': nameController.text,
                           'eventLocation': locationController.text,
                           'eventStartDate': startDateController.text,
+                          'createdAt': DateTime.now().toString(),
+                          'ownerId': uid,
                         };
 
                         // Save event under current user's UID

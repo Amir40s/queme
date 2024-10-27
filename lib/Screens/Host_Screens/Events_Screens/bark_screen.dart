@@ -4,6 +4,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:queme/Utils/Utils.dart';
 import 'package:queme/Widgets/colors.dart';
 import 'package:queme/Widgets/round_button.dart';
@@ -127,7 +128,7 @@ class _BarkScreenState extends State<BarkScreen> {
                 Row(
                   children: [
                     Text(
-                      "Run Name:   ",
+                      "Dog Name:   ",
                       style: TextStyle(
                         fontSize: 15.sp,
                         fontWeight: FontWeight.bold,
@@ -265,7 +266,7 @@ class _BarkScreenState extends State<BarkScreen> {
                           });
                         }
 
-                        Navigator.of(context).pop();
+                        Get.back();
                       }
                     }
                   },
@@ -274,7 +275,7 @@ class _BarkScreenState extends State<BarkScreen> {
                 RoundButton2(
                   title: "Cancel",
                   onPress: () {
-                    Navigator.pop(context);
+                    Get.back();
                   },
                 )
               ],

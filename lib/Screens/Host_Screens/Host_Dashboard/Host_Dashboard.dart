@@ -156,9 +156,9 @@ class _HostDashboardState extends State<HostDashboard> {
                     currentUser != null
                         ? StreamBuilder(
                             stream: _database
-                                .child("Users")
-                                .child(currentUser.uid)
                                 .child("Events")
+                                .orderByChild("ownerId")
+                                .equalTo(currentUser.uid)
                                 .onValue,
                             builder: (context, snapshot) {
                               if (snapshot.hasData &&

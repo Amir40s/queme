@@ -4,6 +4,7 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:queme/Screens/Host_Screens/Host_Dashboard/host_bottom_nav.dart';
 import 'package:queme/Widgets/colors.dart';
@@ -173,21 +174,11 @@ class _LoginScreenState extends State<LoginScreen> {
         String paymentStatus = userData['paymentok'] ?? 'pending';
 
         if (userType == 'Host' && paymentStatus == 'approved') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const HostBottomNav()),
-          );
+          Get.offAll(() => HostBottomNav());
         } else if (userType == 'Participant') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const ParticipentBottomNav()),
-          );
+          Get.offAll(() => ParticipentBottomNav());
         } else {
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const PaymentPlansScreen()));
+          Get.offAll(() => PaymentPlansScreen());
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
                 content:
@@ -342,9 +333,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   InkWell(
                     onTap: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const ForgetPassword()));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ForgetPassword(),
+                        ),
+                      );
                     },
                     child: Align(
                       alignment: Alignment.centerRight,

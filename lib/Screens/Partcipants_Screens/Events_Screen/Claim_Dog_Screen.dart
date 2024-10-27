@@ -153,10 +153,8 @@ class _ClaimDogScreenState extends State<ClaimDogScreen> {
                         String? imageUrl;
 
                         if (image != null) {
-                          Reference ref =
-                              _storage.ref().child('dogs/$uid/$dogId');
-                          await ref.putFile(File(image!.path));
-                          imageUrl = await ref.getDownloadURL();
+                          imageUrl = await Utils()
+                              .uploadFileToCloudinary(image!.path, context);
                         }
 
                         await _database
@@ -269,12 +267,8 @@ class _ClaimDogScreenState extends State<ClaimDogScreen> {
                           });
 
                           if (newImage != null) {
-                            // Upload new image to Firebase Storage
-                            String uid = _auth.currentUser!.uid;
-                            Reference ref =
-                                _storage.ref().child('dogs/$uid/$dogId');
-                            await ref.putFile(File(newImage!.path));
-                            newImageUrl = await ref.getDownloadURL();
+                            newImageUrl = await Utils().uploadFileToCloudinary(
+                                newImage!.path, context);
                           }
 
                           // Update dog data in Firebase Realtime Database

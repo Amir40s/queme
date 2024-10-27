@@ -119,6 +119,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             'uid': user.uid,
             'name': nameController.text.trim(),
             'email': emailController.text.trim(),
+            'createdAt': DateTime.now().toString(),
             'password': passwordController.text
                 .trim(), // Optionally store password (hashing recommended)
             'userType': _userType ??
@@ -201,8 +202,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       color: Colors.black,
                       fontSize: 14.sp),
                   decoration: InputDecoration(
-                    // contentPadding: EdgeInsets.symmetric(
-                    //     vertical: 20.h, horizontal: 10.w),
                     suffixIcon: Icon(Icons.account_circle_rounded, size: 24.sp),
                     border: const OutlineInputBorder(),
                     hintText: "Enter Name",

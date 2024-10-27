@@ -1,4 +1,4 @@
-package com.example.queme
+package com.queme.app
 
 import io.flutter.embedding.android.FlutterActivity
 

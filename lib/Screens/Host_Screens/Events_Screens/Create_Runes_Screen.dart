@@ -153,6 +153,8 @@ class _CreateRunesScreenState extends State<CreateRunesScreen> {
                           'runeLocation': locationController.text,
                           'runeStartDate': startDateController.text,
                           'eventId': widget.eventId,
+                          'createdAt': DateTime.now().toString(),
+                          'ownerId': uid,
                         };
 
                         // Save rune under the current user's event
