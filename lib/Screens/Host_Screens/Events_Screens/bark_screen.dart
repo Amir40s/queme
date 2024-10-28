@@ -244,7 +244,6 @@ class _BarkScreenState extends State<BarkScreen> {
 
                         Utils.toastMessage(
                             "Message sent successfully", Colors.green);
-                        Navigator.pop(context);
 
                         DatabaseReference newRef = _database
                             .child('Users')

@@ -430,9 +430,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                       ),
                                       SizedBox(height: 10.h),
                                       RunesButton(
-                                          title: rune['dogList'] == ''
-                                              ? "Start Run"
-                                              : "Run Created",
+                                          title: 'Run Details',
                                           onPress: () {
                                             Navigator.push(
                                               context,

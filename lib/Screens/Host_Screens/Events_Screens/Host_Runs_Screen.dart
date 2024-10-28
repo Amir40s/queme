@@ -181,6 +181,8 @@ class _HostRunsScreenState extends State<HostRunsScreen>
             "breed": row[3]?.value?.toString() ?? "",
             "claimed": false,
             "checkedIn": false,
+            "createdAt": DateTime.now().toString(),
+
           };
           dogList.add(dogData);
         }
@@ -298,6 +300,7 @@ class _HostRunsScreenState extends State<HostRunsScreen>
                       'competitorName': dogCompetitorC.text ?? '',
                       'claimed': false,
                       'checkedIn': false,
+                      "createdAt": DateTime.now().toString(),
                     };
 
                     // Save the new dog data

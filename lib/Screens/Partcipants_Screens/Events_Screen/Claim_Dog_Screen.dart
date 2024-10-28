@@ -475,34 +475,32 @@ class _ClaimDogScreenState extends State<ClaimDogScreen> {
               SizedBox(
                 height: 10.h,
               ),
-              DottedBorderContainer(
-                height: 80.h,
-                width: 342.w,
-                borderColor: Colors.black,
-                strokeWidth: 2.h,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        _addDog(context);
-                      },
-                      child: SvgPicture.asset('assets/images/upload.svg',
-                          height: 28.h, width: 28.h, color: Colors.black),
-                    ),
-                    SizedBox(
-                      height: 5.h,
-                    ),
-                    Text(
-                      "Upload your dog",
-                      style: TextStyle(
-                        fontSize: 14.h,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Poppins',
-                        color: Colors.grey,
+              GestureDetector(
+                onTap: () {
+                  _addDog(context);
+                },
+                child: DottedBorderContainer(
+                  height: 80.h,
+                  width: 342.w,
+                  borderColor: Colors.black,
+                  strokeWidth: 2.h,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 5.h,
                       ),
-                    ),
-                  ],
+                      Text(
+                        "Upload your dog",
+                        style: TextStyle(
+                          fontSize: 14.h,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Poppins',
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               SizedBox(

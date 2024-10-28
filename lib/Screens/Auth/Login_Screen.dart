@@ -172,10 +172,18 @@ class _LoginScreenState extends State<LoginScreen> {
             snapshot.value as Map<dynamic, dynamic>;
         String userType = userData['userType'] ?? 'Participant';
         String paymentStatus = userData['paymentok'] ?? 'pending';
+        bool deleted = userData['deleted'] ?? false;
+        if (deleted) {
+          Utils.toastMessage(
+              'You account have been blocked by the admin.', Colors.red);
+          return;
+        }
 
         if (userType == 'Host' && paymentStatus == 'approved') {
+          Utils.toastMessage("Login Successful", Colors.green);
           Get.offAll(() => HostBottomNav());
         } else if (userType == 'Participant') {
+          Utils.toastMessage("Login Successful", Colors.green);
           Get.offAll(() => ParticipentBottomNav());
         } else {
           Get.offAll(() => PaymentPlansScreen());
@@ -206,7 +214,6 @@ class _LoginScreenState extends State<LoginScreen> {
           password: passwordController.text.trim(),
         );
         _navigateBasedOnUserType(userCredential.user);
-        Utils.toastMessage("Login Successful", Colors.green);
       } on FirebaseAuthException catch (e) {
         String errorMessage = 'Login failed';
         if (e.code == 'user-not-found') {
