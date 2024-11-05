@@ -36,6 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController _emailController = TextEditingController();
   String _profileImageUrl = 'assets/images/women1.png'; // Default profile image
   String _userType = 'Participant'; // Default profile image
+  String paymentOk = ''; // Default profile image
   bool _isLoading = false;
   List<Map<String, String>> _dogsList = [];
   List<Map<String, dynamic>> _followingEvents = []; // To store followed events
@@ -179,6 +180,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _nameController.text = data['name'] ?? '';
           _emailController.text = data['email'] ?? '';
           _userType = data['userType'] ?? '';
+          paymentOk = data['paymentok'] ?? '';
           _profileImageUrl = data['profileImageUrl'] ?? _profileImageUrl;
         });
 
@@ -789,17 +791,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   : const SizedBox.shrink(),
               _userType == 'Participant'
                   ? RoundButton(
-                      title: "Upgrade To Host",
+                      title: paymentOk == 'approved'
+                          ? "Go to Hosting"
+                          : "Upgrade To Host",
                       onPress: () {
                         Provider.of<EventProvider>(context, listen: false)
                             .changeUserType(_userType == 'Participant'
                                 ? 'Host'
                                 : 'Participant');
 
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) => const PaymentPlansScreen()),
-                        );
+                        paymentOk == 'approved'
+                            ? Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const HostBottomNav()),
+                              )
+                            : Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const PaymentPlansScreen()),
+                              );
                       },
                     )
                   : const SizedBox.shrink(),

@@ -163,7 +163,7 @@ class CompletedDogWidget extends StatelessWidget {
         .child('DogList')
         .child(dogId)
         .update({
-      'claimed': false,
+      'completed': false,
     });
   }
 }

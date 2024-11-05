@@ -190,6 +190,134 @@ class _ClaimDogScreenState extends State<ClaimDogScreen> {
     );
   }
 
+  // Method to add a new dog
+  Future<void> _claimDogWidget(
+      BuildContext context, String name, String dogImage, String dogID) async {
+    XFile? image;
+    String imageUrl = '';
+    bool isLoading = false;
+    final nameC = TextEditingController();
+    nameC.text = name;
+    final formKey = GlobalKey<FormState>();
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          // Use StatefulBuilder to manage the state within the dialog
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Claim Dog'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Form(
+                    key: formKey,
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter a dog name';
+                        }
+                        return null;
+                      },
+                      controller: nameC,
+                      decoration: const InputDecoration(labelText: 'Dog Name'),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  if (dogImage != '' && image == null)
+                    Image.network(
+                      dogImage,
+                      width: 70.w,
+                      height: 70.h,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return const Center(child: CircularProgressIndicator());
+                      },
+                    ),
+                  if (image != null) Image.file(File(image!.path), height: 100),
+                  if (isLoading) // Display loading indicator if isLoading is true
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(),
+                        SizedBox(width: 10),
+                        Text('Please Wait'),
+                      ],
+                    ),
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.image),
+                    label: const Text('Upload Dog Picture'),
+                    onPressed: () async {
+                      setState(() {
+                        isLoading = true;
+                      });
+
+                      image = await ImagePicker()
+                          .pickImage(source: ImageSource.gallery);
+
+                      setState(() {
+                        isLoading = false;
+                      });
+
+                      if (image != null) {
+                        setState(() {});
+                      }
+                    },
+                  ),
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                TextButton(
+                  child: const Text('Claim'),
+                  onPressed: () async {
+                    if (image == null && dogImage.isEmpty) {
+                      Utils.toastMessage('Dog image is required', Colors.red);
+                      return;
+                    }
+                    if (formKey.currentState!.validate()) {
+                      setState(() {
+                        isLoading = true;
+                      });
+
+                      String dogId = const Uuid().v4();
+                      String uid = _auth.currentUser!.uid;
+                      String imageUrl = '';
+
+                      if (image != null) {
+                        imageUrl = await Utils()
+                            .uploadFileToCloudinary(image!.path, context);
+                      }
+
+                      await _claimDog(dogId, nameC.text,
+                          imageUrl.isNotEmpty ? imageUrl : dogImage);
+
+                      Utils.toastMessage(
+                          "Dog claimed successfully", Colors.green);
+                      setState(() {
+                        isLoading = false;
+                      });
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ClaimSuccfullyScreen()),
+                      );
+                    }
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   // Method to edit a dog's name and picture
   Future<void> _editDog(BuildContext context, String dogId, String currentName,
       String currentImageUrl, String currentBreed) async {
@@ -302,19 +430,10 @@ class _ClaimDogScreenState extends State<ClaimDogScreen> {
   }
 
 // Method to claim the dog
-  Future<void> _claimDog(String dogId, String dogName, String dogBreed) async {
+  Future<void> _claimDog(String dogId, String dogName, String imageUrl) async {
     String uid = _auth.currentUser!.uid;
 
     try {
-      await _database
-          .child('Users')
-          .child(uid)
-          .child('MyDogs')
-          .child(dogId)
-          .update({
-        'claimed': true,
-      });
-
       _database
           .child('Events')
           .child(widget.eventId)
@@ -323,28 +442,11 @@ class _ClaimDogScreenState extends State<ClaimDogScreen> {
           .child('DogList')
           .child(widget.dogId)
           .update(
-        {'claimed': true},
-      );
-      _database
-          .child('Users')
-          .child(uid)
-          .child('Events')
-          .child(widget.eventId)
-          .child('Runes')
-          .child(widget.runeId)
-          .child('DogList')
-          .child(widget.dogId)
-          .update(
-        {'claimed': true},
-      );
-
-      // Add the dog to the 'ClaimedDogs' node with the provided details
-
-      Utils.toastMessage("Dog claimed successfully", Colors.green);
-      // After successfully claiming, navigate to ClaimSuccessfullyScreen
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const ClaimSuccfullyScreen()),
+        {
+          'claimed': true,
+          'dogName': dogName,
+          'imageUrl': imageUrl,
+        },
       );
     } catch (e) {
       // Handle error, you can also show a message to the user if needed
@@ -359,49 +461,57 @@ class _ClaimDogScreenState extends State<ClaimDogScreen> {
         : _isLoading
             ? const Center(child: Text("Please Wait"))
             : Column(
-                children: _dogsList.map((dog) {
-                  return Padding(
-                    padding: EdgeInsets.all(8.0.h),
-                    child: Stack(
-                      children: [
-                        ClipRRect(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              if (dog['imageUrl'] != '')
-                                Image.network(
-                                  dog['imageUrl']!,
-                                  width: 70.w,
-                                  height: 70.h,
-                                  fit: BoxFit.cover,
-                                  loadingBuilder:
-                                      (context, child, loadingProgress) {
-                                    if (loadingProgress == null) return child;
-                                    return const Center(
-                                        child: CircularProgressIndicator());
+                children: _dogsList.map(
+                  (dog) {
+                    return Padding(
+                      padding: EdgeInsets.all(8.0.h),
+                      child: Stack(
+                        children: [
+                          ClipRRect(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                if (dog['imageUrl'] != '')
+                                  Image.network(
+                                    dog['imageUrl']!,
+                                    width: 70.w,
+                                    height: 70.h,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return const Center(
+                                          child: CircularProgressIndicator());
+                                    },
+                                  ),
+                                Text(
+                                  dog['name']!,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: "Poppins",
+                                      fontSize: 16.sp),
+                                ),
+                                FollowButton(
+                                  title: "Claim",
+                                  onPress: () {
+                                    // _claimDog(
+                                    //     dog['id']!, dog['name']!, dog['breed']!);
+                                    _claimDogWidget(
+                                      context,
+                                      dog['name']!,
+                                      dog['imageUrl']!,
+                                      dog['id']!,
+                                    );
                                   },
                                 ),
-                              Text(
-                                dog['name']!,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: "Poppins",
-                                    fontSize: 16.sp),
-                              ),
-                              FollowButton(
-                                title: "Claim",
-                                onPress: () {
-                                  _claimDog(
-                                      dog['id']!, dog['name']!, dog['breed']!);
-                                },
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                }).toList(),
+                        ],
+                      ),
+                    );
+                  },
+                ).toList(),
               );
   }
 

@@ -260,8 +260,7 @@ class _RunningDogWidgetState extends State<RunningDogWidget> {
                               .child('DogList')
                               .child(widget.id)
                               .update({
-                            'checkedIn': true,
-                            'claimed': true,
+                            'completed': true,
                           });
                           setState(() {
                             showDetail = !showDetail;

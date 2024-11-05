@@ -60,6 +60,7 @@ class _PaymentSuccessfulScreenState extends State<PaymentSuccessfulScreen> {
                   onPress: () {
                     Provider.of<EventProvider>(context, listen: false)
                         .changeUserType('Host');
+
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(

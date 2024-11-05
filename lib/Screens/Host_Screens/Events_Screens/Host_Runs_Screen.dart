@@ -182,7 +182,6 @@ class _HostRunsScreenState extends State<HostRunsScreen>
             "claimed": false,
             "checkedIn": false,
             "createdAt": DateTime.now().toString(),
-
           };
           dogList.add(dogData);
         }
@@ -417,12 +416,12 @@ class _HostRunsScreenState extends State<HostRunsScreen>
                                     'ownerName': dog['ownerName'],
                                     'claimed': dog['claimed'] ?? false,
                                     'checkedIn': dog['checkedIn'] ?? false,
-                                    'order': dog['order'] ??
-                                        0, // Get the order field
+                                    'completed': dog['completed'] ?? false,
+                                    'order': dog['order'] ?? 0,
                                   };
                                 })
                                 .where((dog) =>
-                                    dog['claimed'] ==
+                                    dog['completed'] ==
                                     false) // Filter only dogs not claimed
                                 .toList();
 
@@ -503,12 +502,12 @@ class _HostRunsScreenState extends State<HostRunsScreen>
                               'ownerName': dog['ownerName'],
                               'imgUrl': dog['imgUrl'] ??
                                   '', // Handle missing image URLs
-                              'claimed': dog['claimed'] ??
-                                  false, // Ensure claimed is a boolean
+                              'claimed': dog['claimed'] ?? false,
+                              'completed': dog['completed'] ?? false,
                             };
                           })
                           .where((dog) =>
-                              dog['claimed'] ==
+                              dog['completed'] ==
                               true) // Filter dogs that are claimed
                           .toList();
                       return dogs.isNotEmpty

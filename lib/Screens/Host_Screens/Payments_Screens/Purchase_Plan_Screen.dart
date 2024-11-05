@@ -4,22 +4,20 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:queme/Screens/Host_Screens/Payments_Screens/Payment_Plans_Screen.dart';
 import 'package:queme/Utils/Utils.dart';
 import 'package:queme/Widgets/round_button.dart';
+import 'package:queme/provider/eventProvider.dart';
 import '../../../Widgets/colors.dart';
 import 'Payment_Info_Screen.dart';
 import 'Payment_Successful_Screen.dart';
 
 class PurchasePlanScreen extends StatefulWidget {
-  final String planTitle;
-  final String planDescription;
-  final int planAmount;
-
+  final PackageModel package;
   PurchasePlanScreen({
     Key? key,
-    required this.planTitle,
-    required this.planDescription,
-    required this.planAmount,
+    required this.package,
   }) : super(key: key);
 
   @override
@@ -121,18 +119,25 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
 
                 // Display Add Card or Card Info
                 userCardNumber == null
-                    ? _buildAddCardContainer()
-                    : _buildCardInfo(),
+                    ? _buildAddCardContainer(widget.package)
+                    : _buildCardInfo(widget.package),
 
                 SizedBox(height: 50.h),
                 RoundButton(
                   title: "Confirm Purchase",
-                  onPress: () {
+                  onPress: () async {
                     _confirmPurchase(); // Update Firebase with selected method
+                    final data =
+                        await Provider.of<EventProvider>(context, listen: false)
+                            .getCurrentUserData();
+                    Provider.of<EventProvider>(context, listen: false)
+                        .addPayment(widget.package, data['name'],
+                            data['profileImageUrl'] ?? '');
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => PaymentSuccessfulScreen()));
+                            builder: (context) =>
+                                const PaymentSuccessfulScreen()));
                   },
                 ),
               ],
@@ -157,13 +162,13 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(widget.planTitle,
+              Text(widget.package.title,
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontFamily: "Poppins",
                       fontSize: 24.sp)),
               SizedBox(height: 10.h),
-              Text(widget.planDescription,
+              Text(widget.package.description,
                   style: TextStyle(
                       fontFamily: "Poppins",
                       fontSize: 16.sp,
@@ -177,7 +182,7 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
                           fontWeight: FontWeight.bold,
                           fontFamily: "Poppins",
                           fontSize: 16.sp)),
-                  Text("\$${widget.planAmount}",
+                  Text("\$${widget.package.price}",
                       style: TextStyle(
                           fontFamily: "Poppins",
                           fontSize: 16.sp,
@@ -227,7 +232,7 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
   }
 
   // Build Add Card Container if No Card is Saved
-  Widget _buildAddCardContainer() {
+  Widget _buildAddCardContainer(PackageModel package) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -240,10 +245,11 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
           InkWell(
             onTap: () {
               Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const PaymentInfoScreen()))
-                  .then((value) {
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PaymentInfoScreen(
+                            package: package,
+                          ))).then((value) {
                 if (value == true) {
                   _loadUserCardInfo(); // Reload card info when returning from PaymentInfoScreen
                 }
@@ -265,7 +271,7 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
   }
 
   // Display Masked Card Info and Edit Icon
-  Widget _buildCardInfo() {
+  Widget _buildCardInfo(PackageModel package) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -275,10 +281,11 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
           icon: const Icon(Icons.edit),
           onPressed: () {
             Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const PaymentInfoScreen()))
-                .then((value) {
+                context,
+                MaterialPageRoute(
+                    builder: (context) => PaymentInfoScreen(
+                          package: package,
+                        ))).then((value) {
               if (value == true) {
                 _loadUserCardInfo(); // Reload card info after editing
               }

@@ -50,10 +50,10 @@ class MyApp extends StatelessWidget {
                 colorScheme: const ColorScheme.light().copyWith(
                   primary: Colors.red,
                 ),
-                appBarTheme: AppBarTheme(scrolledUnderElevation: 0),
+                appBarTheme: const AppBarTheme(scrolledUnderElevation: 0),
                 scaffoldBackgroundColor: AppColors.whiteColor,
                 fontFamily: 'Palanquin Dark',
-                textTheme: TextTheme(
+                textTheme: const TextTheme(
                   bodyLarge: TextStyle(fontSize: 18.0),
                   bodyMedium: TextStyle(fontSize: 16.0),
                   displayLarge: TextStyle(fontSize: 30.0),

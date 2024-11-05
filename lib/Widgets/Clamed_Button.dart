@@ -24,6 +24,7 @@ class ClamedButton extends StatelessWidget {
     return InkWell(
       onTap: onPress,
       child: Container(
+        padding: EdgeInsets.symmetric(vertical: 7),
         decoration: BoxDecoration(
           color: bgColor ?? Colors.grey[300],
         ),

@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:queme/Screens/Host_Screens/Payments_Screens/Payment_Plans_Screen.dart';
 import 'package:queme/Utils/Utils.dart';
 
 class EventProvider with ChangeNotifier {
@@ -237,5 +238,31 @@ class EventProvider with ChangeNotifier {
         .child('Users')
         .child(_auth.currentUser!.uid)
         .update({'userType': type});
+  }
+
+  void addPayment(PackageModel model, String name, String image) {
+    User? currentUser = _auth.currentUser;
+    _database.child('Payments').push().set(
+      {
+        'title': model.title,
+        'price': model.price,
+        'image': image,
+        'name': name,
+        'createdAt': DateTime.now().toString(),
+      },
+    );
+    _database.child('Users').child(currentUser!.uid).update({
+      "paymentok": "approved",
+    });
+  }
+
+  getCurrentUserData() async {
+    User? currentUser = _auth.currentUser;
+    DatabaseReference userRef =
+        _database.child('Users').child(currentUser!.uid);
+    DataSnapshot snapshot = await userRef.get();
+    Map<dynamic, dynamic> userData = snapshot.value as Map<dynamic, dynamic>;
+
+    return userData;
   }
 }

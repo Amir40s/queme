@@ -57,11 +57,20 @@ class _SplashScreenState extends State<SplashScreen> {
               'You account have been blocked by the admin.', Colors.red);
           return;
         }
+        bool isTrialExpired(String startDateString) {
+          if (startDateString.isEmpty) {
+            return false;
+          }
+          DateTime startDate = DateTime.parse(startDateString);
+          DateTime endDate = startDate.add(Duration(days: 7));
+          return DateTime.now().isAfter(endDate);
+        }
 
         String userType = userData['userType'] ?? 'Participant';
         String paymentStatus = userData['paymentok'] ?? 'pending';
+        bool trialEnd = isTrialExpired(userData['freeTrialStart'] ?? "");
 
-        if (userType == 'Host' && paymentStatus == 'approved') {
+        if (userType == 'Host' && paymentStatus == 'approved' || !trialEnd) {
           updateToken(currentUser.uid);
           Navigator.pushReplacement(
             context,

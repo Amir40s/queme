@@ -4,13 +4,17 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:queme/Screens/Host_Screens/Payments_Screens/Payment_Plans_Screen.dart';
 import 'package:queme/Utils/Utils.dart';
 import 'package:queme/Widgets/round_button.dart';
+import 'package:queme/provider/eventProvider.dart';
 
 import 'Payment_Successful_Screen.dart';
 
 class PaymentInfoScreen extends StatefulWidget {
-  const PaymentInfoScreen({super.key});
+  const PaymentInfoScreen({super.key, required this.package});
+  final PackageModel package;
 
   @override
   State<PaymentInfoScreen> createState() => _PaymentInfoScreenState();
@@ -120,6 +124,12 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
                   title: "Pay Now",
                   onPress: () async {
                     await _saveCardInfoToFirebase(); // Call to save card info
+                    final data =
+                        await Provider.of<EventProvider>(context, listen: false)
+                            .getCurrentUserData();
+                    Provider.of<EventProvider>(context, listen: false)
+                        .addPayment(widget.package, data['name'],
+                            data['profileImageUrl'] ?? '');
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(

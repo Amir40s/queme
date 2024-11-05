@@ -141,182 +141,175 @@ class _RuneDetailScreenState extends State<RuneDetailScreen>
                                 Map<dynamic, dynamic> dataMap = snapshot.data!
                                     .snapshot.value as Map<dynamic, dynamic>;
 
-                                // Convert the map to a list of dogs
-                                List<Map<String, dynamic>> dogs =
-                                    dataMap.entries.map((entry) {
-                                  var dog =
-                                      entry.value as Map<dynamic, dynamic>;
-                                  return {
-                                    'id': entry.key
-                                        .toString(), // Firebase key as the ID
-                                    'breed': dog['breed'] ?? '',
-                                    'competitorName':
-                                        dog['competitorName'] ?? '',
-                                    'dogName': dog['dogName'] ?? '',
-                                    'ownerName': dog['ownerName'] ?? '',
-                                    'imageUrl': dog['imageUrl'] ??
-                                        '', // Handle missing imageUrl
-                                    'claimed': dog['claimed'] ??
-                                        false, // Ensure claimed is a boolean
-                                  };
-                                }).toList();
+                                List<Map<String, dynamic>> dogs = dataMap
+                                    .entries
+                                    .map(
+                                      (entry) {
+                                        var dog = entry.value
+                                            as Map<dynamic, dynamic>;
+                                        return {
+                                          'id': entry.key.toString(),
+                                          'breed': dog['breed'] ?? '',
+                                          'competitorName':
+                                              dog['competitorName'] ?? '',
+                                          'dogName': dog['dogName'] ?? '',
+                                          'ownerName': dog['ownerName'] ?? '',
+                                          'imageUrl': dog['imageUrl'] ?? '',
+                                          'claimed': dog['claimed'] ?? false,
+                                          'completed':
+                                              dog['completed'] ?? false,
+                                        };
+                                      },
+                                    )
+                                    .where((dog) => dog['completed'] == false)
+                                    .toList();
+
                                 return dogs.isNotEmpty
                                     ? ListView.builder(
                                         itemCount: dogs.length,
                                         itemBuilder: (context, index) {
                                           var dog = dogs[index];
-                                          return dog['claimed'] == false
-                                              ? Container(
-                                                  margin: EdgeInsets.only(
-                                                      bottom: 10.h),
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                    color: Colors.grey.shade200,
-                                                  ),
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            15.0),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Row(
-                                                              children: [
-                                                                Text(
-                                                                  dog['dogName'] ??
-                                                                      'Dog Name',
+                                          return Container(
+                                            margin:
+                                                EdgeInsets.only(bottom: 10.h),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              color: Colors.grey.shade200,
+                                            ),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(15.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                                            dog['dogName'] ??
+                                                                'Dog Name',
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  "Palanquin Dark",
+                                                              fontSize: 18.sp,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: 5.w),
+                                                          dog['imageUrl'] != ''
+                                                              ? Container(
+                                                                  height: 34.h,
+                                                                  width: 34.w,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            12),
+                                                                    image:
+                                                                        DecorationImage(
+                                                                      image:
+                                                                          NetworkImage(
+                                                                        dog['imageUrl'] ??
+                                                                            '',
+                                                                      ),
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                    ),
+                                                                  ),
+                                                                )
+                                                              : SizedBox
+                                                                  .shrink()
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          dog['ownerName'] != ''
+                                                              ? Text(
+                                                                  dog['ownerName'],
                                                                   style:
                                                                       TextStyle(
                                                                     fontFamily:
                                                                         "Palanquin Dark",
                                                                     fontSize:
-                                                                        18.sp,
+                                                                        16.sp,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
                                                                   ),
-                                                                ),
-                                                                SizedBox(
-                                                                    width: 5.w),
-                                                                dog['imageUrl'] !=
-                                                                        ''
-                                                                    ? Container(
-                                                                        height:
-                                                                            34.h,
-                                                                        width:
-                                                                            34.w,
-                                                                        decoration:
-                                                                            BoxDecoration(
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(12),
-                                                                          image:
-                                                                              DecorationImage(
-                                                                            image:
-                                                                                NetworkImage(
-                                                                              dog['imageUrl'] ?? '',
-                                                                            ),
-                                                                            fit:
-                                                                                BoxFit.cover,
-                                                                          ),
-                                                                        ),
-                                                                      )
-                                                                    : SizedBox
-                                                                        .shrink()
-                                                              ],
-                                                            ),
-                                                            Row(
-                                                              children: [
-                                                                dog['ownerName'] !=
-                                                                        ''
-                                                                    ? Text(
-                                                                        dog['ownerName'],
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontFamily:
-                                                                              "Palanquin Dark",
-                                                                          fontSize:
-                                                                              16.sp,
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                        ),
-                                                                      )
-                                                                    : SizedBox
-                                                                        .shrink(),
-                                                              ],
-                                                            ),
-                                                            dog['breed'] != ''
-                                                                ? Text(
-                                                                    "Breed: ${dog['breed'] ?? 'Dog Breed'}",
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontFamily:
-                                                                          "Palanquin Dark",
-                                                                      fontSize:
-                                                                          16.sp,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                    ),
-                                                                  )
-                                                                : SizedBox
-                                                                    .shrink(),
-                                                            dog['competitorName'] !=
-                                                                    ''
-                                                                ? Text(
-                                                                    "Competitor #: ${dog['competitorName']}",
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontFamily:
-                                                                          "Palanquin Dark",
-                                                                      fontSize:
-                                                                          16.sp,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                    ),
-                                                                  )
-                                                                : SizedBox
-                                                                    .shrink()
-                                                          ],
-                                                        ),
-                                                        ClamedButton(
-                                                          title: "Claim",
-                                                          bgColor: AppColors
-                                                              .buttonColor,
-                                                          textColor: AppColors
-                                                              .whiteColor,
-                                                          onPress: () {
-                                                            Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        ClaimDogScreen(
-                                                                  eventId: widget
-                                                                      .eventId,
-                                                                  runeId: widget
-                                                                      .runeId,
-                                                                  dogId:
-                                                                      dog['id'],
-                                                                ),
+                                                                )
+                                                              : SizedBox
+                                                                  .shrink(),
+                                                        ],
+                                                      ),
+                                                      dog['breed'] != ''
+                                                          ? Text(
+                                                              "Breed: ${dog['breed'] ?? 'Dog Breed'}",
+                                                              style: TextStyle(
+                                                                fontFamily:
+                                                                    "Palanquin Dark",
+                                                                fontSize: 16.sp,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
                                                               ),
-                                                            );
-                                                          },
-                                                        ),
-                                                      ],
-                                                    ),
+                                                            )
+                                                          : SizedBox.shrink(),
+                                                      dog['competitorName'] !=
+                                                              ''
+                                                          ? Text(
+                                                              "Competitor #: ${dog['competitorName']}",
+                                                              style: TextStyle(
+                                                                fontFamily:
+                                                                    "Palanquin Dark",
+                                                                fontSize: 16.sp,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            )
+                                                          : SizedBox.shrink()
+                                                    ],
                                                   ),
-                                                )
-                                              : SizedBox.shrink();
+                                                  ClamedButton(
+                                                    title: dog['claimed']
+                                                        ? 'Claimed'
+                                                        : "Claim",
+                                                    bgColor: dog['claimed']
+                                                        ? Colors.grey
+                                                        : AppColors.buttonColor,
+                                                    textColor:
+                                                        AppColors.whiteColor,
+                                                    onPress: () {
+                                                      if (!dog['claimed']) {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                ClaimDogScreen(
+                                                              eventId: widget
+                                                                  .eventId,
+                                                              runeId:
+                                                                  widget.runeId,
+                                                              dogId: dog['id'],
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
                                         },
                                       )
                                     : const Padding(
@@ -397,14 +390,13 @@ class _RuneDetailScreenState extends State<RuneDetailScreen>
                                           'ownerName': dog['ownerName'],
                                           'imgUrl': dog['imgUrl'] ??
                                               '', // Handle missing image URLs
-                                          'claimed': dog['claimed'] ??
-                                              false, // Ensure claimed is a boolean
+                                          'claimed': dog['claimed'] ?? false,
+                                          'completed':
+                                              dog['completed'] ?? false,
                                         };
                                       },
                                     )
-                                    .where((dog) =>
-                                        dog['claimed'] ==
-                                        true) // Filter dogs that are claimed
+                                    .where((dog) => dog['completed'] == true)
                                     .toList();
 
                                 return dogs.isNotEmpty
