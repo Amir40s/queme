@@ -12,9 +12,7 @@ import 'package:queme/Screens/Host_Screens/Events_Screens/components/completed_d
 import 'package:queme/Screens/Host_Screens/Events_Screens/components/running_dog_list_widget.dart';
 import 'package:queme/Utils/Utils.dart';
 import 'package:queme/Widgets/colors.dart';
-import 'package:queme/Widgets/round_button.dart';
 import '../../../Widgets/Excel_button.dart';
-import '../../../Widgets/Upcoming_button.dart';
 
 class HostRunsScreen extends StatefulWidget {
   final String eventId;
@@ -23,12 +21,12 @@ class HostRunsScreen extends StatefulWidget {
   final String date;
 
   const HostRunsScreen({
-    Key? key,
+    super.key,
     required this.eventId,
     required this.runeId,
     required this.runeName,
     required this.date,
-  }) : super(key: key);
+  });
 
   @override
   State<HostRunsScreen> createState() => _HostRunsScreenState();

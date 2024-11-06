@@ -9,7 +9,6 @@ import 'package:queme/Utils/Utils.dart';
 import 'package:queme/Widgets/colors.dart';
 import 'package:queme/Widgets/round_button.dart';
 import 'package:queme/Widgets/round_button2.dart';
-import 'package:intl/intl.dart';
 
 class BarkScreen extends StatefulWidget {
   const BarkScreen(
@@ -168,7 +167,7 @@ class _BarkScreenState extends State<BarkScreen> {
                               ),
                             ],
                           )
-                        : SizedBox.shrink()
+                        : const SizedBox.shrink()
                   ],
                 ),
                 SizedBox(height: 15.h),
@@ -195,7 +194,7 @@ class _BarkScreenState extends State<BarkScreen> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(5),
                         ),
-                        child: Text(
+                        child: const Text(
                           '4 dogs away +',
                           style: TextStyle(
                             fontSize: 15,
@@ -219,7 +218,7 @@ class _BarkScreenState extends State<BarkScreen> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(5),
                         ),
-                        child: Text(
+                        child: const Text(
                           '8 dogs away +',
                           style: TextStyle(
                             fontSize: 15,
@@ -302,7 +301,7 @@ class _BarkScreenState extends State<BarkScreen> {
             fontFamily: 'Palanquin Dark',
           ),
         ),
-        SizedBox(height: 5),
+        const SizedBox(height: 5),
         TextFormField(
           controller: controller,
           focusNode: focusNode,
@@ -316,7 +315,7 @@ class _BarkScreenState extends State<BarkScreen> {
             // contentPadding: EdgeInsets.symmetric(
             //     vertical: size.height * 0.020, horizontal: 10),
             suffixIcon: Padding(
-              padding: EdgeInsets.only(right: 10),
+              padding: const EdgeInsets.only(right: 10),
               child: Icon(Icons.date_range, size: 24.h),
             ),
             border: const OutlineInputBorder(),
@@ -390,13 +389,13 @@ class CustomTextField extends StatelessWidget {
   final String? Function(String?, String)? validator; // Optional validator
 
   const CustomTextField({
-    Key? key,
+    super.key,
     required this.label,
     required this.controller,
     required this.textInputAction,
     this.maxLines,
     this.validator, // Make the validator optional
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

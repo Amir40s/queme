@@ -8,7 +8,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:queme/Screens/Host_Screens/Events_Screens/bark_screen.dart';
 import 'package:queme/Widgets/colors.dart';
 
-import '../../../../Widgets/Excel_button.dart';
 
 class RunningDogListWidget extends StatelessWidget {
   final List<Map<String, dynamic>> dogList;
@@ -269,7 +268,7 @@ class _RunningDogWidgetState extends State<RunningDogWidget> {
                         child: Column(
                           children: [
                             Container(
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                 color: Color(0xff4CAF50),
                                 shape: BoxShape.circle,
                               ),
@@ -284,7 +283,7 @@ class _RunningDogWidgetState extends State<RunningDogWidget> {
                             Text(
                               'Complete',
                               style: TextStyle(
-                                color: Color(0xff4CAF50),
+                                color: const Color(0xff4CAF50),
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.w700,
                                 fontFamily: 'Palanquin Dark',
@@ -377,7 +376,7 @@ class _RunningDogWidgetState extends State<RunningDogWidget> {
   void _startTimer() {
     // Cancel any existing timer
     _cancelTimer();
-    _timer = Timer(Duration(seconds: 4), () {
+    _timer = Timer(const Duration(seconds: 4), () {
       setState(() {
         showDetail = false; // Collapse the widget after 5 seconds
       });

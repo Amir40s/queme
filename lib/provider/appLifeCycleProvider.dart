@@ -71,7 +71,7 @@ class AppLifeCycleProvider with ChangeNotifier, WidgetsBindingObserver {
 
   // Function to handle the paused state with a delay
   void _handleAppPausedState() async {
-    await Future.delayed(Duration(seconds: 5));
+    await Future.delayed(const Duration(seconds: 5));
     if (_isAppInBackground) {
       // If the app is still in the background after the delay, set the user offline
       setUserOffline();

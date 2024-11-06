@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'colors.dart';
 
 class ClamedButton extends StatelessWidget {
   final String title;
@@ -24,7 +23,7 @@ class ClamedButton extends StatelessWidget {
     return InkWell(
       onTap: onPress,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 7),
+        padding: const EdgeInsets.symmetric(vertical: 7),
         decoration: BoxDecoration(
           color: bgColor ?? Colors.grey[300],
         ),

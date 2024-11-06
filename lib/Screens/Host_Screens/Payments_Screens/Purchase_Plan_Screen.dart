@@ -8,17 +8,16 @@ import 'package:provider/provider.dart';
 import 'package:queme/Screens/Host_Screens/Payments_Screens/Payment_Plans_Screen.dart';
 import 'package:queme/Utils/Utils.dart';
 import 'package:queme/Widgets/round_button.dart';
-import 'package:queme/provider/eventProvider.dart';
+import 'package:queme/provider/paymentProvider.dart';
 import '../../../Widgets/colors.dart';
 import 'Payment_Info_Screen.dart';
-import 'Payment_Successful_Screen.dart';
 
 class PurchasePlanScreen extends StatefulWidget {
   final PackageModel package;
-  PurchasePlanScreen({
-    Key? key,
+  const PurchasePlanScreen({
+    super.key,
     required this.package,
-  }) : super(key: key);
+  });
 
   @override
   State<PurchasePlanScreen> createState() => _PurchasePlanScreenState();
@@ -61,87 +60,83 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
-            child: Column(
-              children: [
-                // Back Button and Heading
-                Row(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        elevation: 3,
-                        child: Padding(
-                          padding: EdgeInsets.all(15.0.h),
-                          child: SvgPicture.asset(
-                            'assets/images/back_arrow.svg',
-                            height: 30,
-                            width: 30,
-                          ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
+          child: Column(
+            children: [
+              // Back Button and Heading
+              Row(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      elevation: 3,
+                      child: Padding(
+                        padding: EdgeInsets.all(15.0.h),
+                        child: SvgPicture.asset(
+                          'assets/images/back_arrow.svg',
+                          height: 30,
+                          width: 30,
                         ),
                       ),
                     ),
-                    SizedBox(width: 20.w),
-                    Text(
-                      "Purchase Plan",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: "Palanquin Dark",
-                        fontSize: 24.sp,
-                        fontWeight: FontWeight.w800,
-                      ),
+                  ),
+                  SizedBox(width: 20.w),
+                  Text(
+                    "Purchase Plan",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "Palanquin Dark",
+                      fontSize: 24.sp,
+                      fontWeight: FontWeight.w800,
                     ),
-                  ],
-                ),
-                // Plan Details Container
-                _buildPlanDetails(),
+                  ),
+                ],
+              ),
+              // Plan Details Container
+              _buildPlanDetails(),
 
-                SizedBox(height: 20.h),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text("Payment Method",
-                      style: TextStyle(
-                          fontFamily: "Poppins",
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.w600)),
-                ),
-                SizedBox(height: 20.h),
-                _buildPaymentMethods(),
+              // SizedBox(height: 20.h),
+              // Align(
+              //   alignment: Alignment.centerLeft,
+              //   child: Text("Payment Method",
+              //       style: TextStyle(
+              //           fontFamily: "Poppins",
+              //           fontSize: 20.sp,
+              //           fontWeight: FontWeight.w600)),
+              // ),
+              // SizedBox(height: 20.h),
+              // _buildPaymentMethods(),
+              //
+              // SizedBox(height: 20.h),
+              //
+              // // Display Add Card or Card Info
+              // userCardNumber == null
+              //     ? _buildAddCardContainer(widget.package)
+              //     : _buildCardInfo(widget.package),
 
-                SizedBox(height: 20.h),
-
-                // Display Add Card or Card Info
-                userCardNumber == null
-                    ? _buildAddCardContainer(widget.package)
-                    : _buildCardInfo(widget.package),
-
-                SizedBox(height: 50.h),
-                RoundButton(
-                  title: "Confirm Purchase",
-                  onPress: () async {
-                    _confirmPurchase(); // Update Firebase with selected method
-                    final data =
-                        await Provider.of<EventProvider>(context, listen: false)
-                            .getCurrentUserData();
-                    Provider.of<EventProvider>(context, listen: false)
-                        .addPayment(widget.package, data['name'],
-                            data['profileImageUrl'] ?? '');
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                const PaymentSuccessfulScreen()));
-                  },
-                ),
-              ],
-            ),
+              const Spacer(),
+              Consumer<PaymentProvider>(
+                builder: (context, provider, child) {
+                  return provider.isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : RoundButton(
+                          title: "Confirm Purchase",
+                          onPress: () {
+                            provider.makePayment(context, widget.package.price,
+                                widget.package.title);
+                          },
+                        );
+                },
+              ),
+            ],
           ),
         ),
       ),

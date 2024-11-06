@@ -7,15 +7,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:queme/Screens/Host_Screens/Events_Screens/components/completed_dog_list_widget.dart';
-import 'package:queme/Widgets/Not_CheckedIn.dart';
 import 'package:queme/Widgets/colors.dart';
 import 'package:queme/Widgets/round_button.dart';
-import 'package:queme/Widgets/round_button2.dart';
 import 'package:queme/provider/eventProvider.dart';
 import '../../../Utils/Utils.dart';
 import '../../../Widgets/Clamed_Button.dart';
 import '../../../Widgets/Upcoming_button.dart';
-import '../../../Widgets/follow_button.dart';
 import 'Claim_Dog_Screen.dart';
 
 class RuneDetailScreen extends StatefulWidget {
@@ -39,7 +36,7 @@ class RuneDetailScreen extends StatefulWidget {
 class _RuneDetailScreenState extends State<RuneDetailScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  List<Map<String, String>> _dogsList = [];
+  final List<Map<String, String>> _dogsList = [];
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final DatabaseReference _database = FirebaseDatabase.instanceFor(
@@ -81,7 +78,7 @@ class _RuneDetailScreenState extends State<RuneDetailScreen>
         ),
         title: Text(
           widget.runeName,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.black,
             fontFamily: "Palanquin Dark",
             fontSize: 20,
@@ -104,7 +101,7 @@ class _RuneDetailScreenState extends State<RuneDetailScreen>
           labelColor: Colors.red,
           unselectedLabelColor: Colors.grey,
           indicatorColor: Colors.red,
-          labelStyle: TextStyle(
+          labelStyle: const TextStyle(
               fontFamily: "Palanquin Dark",
               fontSize: 18,
               fontWeight: FontWeight.bold),
@@ -226,7 +223,7 @@ class _RuneDetailScreenState extends State<RuneDetailScreen>
                                                                     ),
                                                                   ),
                                                                 )
-                                                              : SizedBox
+                                                              : const SizedBox
                                                                   .shrink()
                                                         ],
                                                       ),
@@ -246,7 +243,7 @@ class _RuneDetailScreenState extends State<RuneDetailScreen>
                                                                             .bold,
                                                                   ),
                                                                 )
-                                                              : SizedBox
+                                                              : const SizedBox
                                                                   .shrink(),
                                                         ],
                                                       ),
@@ -262,7 +259,7 @@ class _RuneDetailScreenState extends State<RuneDetailScreen>
                                                                         .bold,
                                                               ),
                                                             )
-                                                          : SizedBox.shrink(),
+                                                          : const SizedBox.shrink(),
                                                       dog['competitorName'] !=
                                                               ''
                                                           ? Text(
@@ -276,7 +273,7 @@ class _RuneDetailScreenState extends State<RuneDetailScreen>
                                                                         .bold,
                                                               ),
                                                             )
-                                                          : SizedBox.shrink()
+                                                          : const SizedBox.shrink()
                                                     ],
                                                   ),
                                                   ClamedButton(

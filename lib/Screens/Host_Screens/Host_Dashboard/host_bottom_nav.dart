@@ -1,10 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../Partcipants_Screens/Events_Screen/Events_Screen.dart';
-import '../../Partcipants_Screens/Home_Screen/Home_Screen.dart';
 import '../../Partcipants_Screens/Profile_Screen/Profile_Screen.dart';
 import '../Payments_Screens/Payment_Plans_Screen.dart';
 import 'Host_Dashboard.dart';

@@ -1,29 +1,24 @@
-import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:queme/Screens/Partcipants_Screens/Profile_Screen/Profile_Screen.dart';
 import 'package:queme/Widgets/colors.dart';
+import 'package:queme/config/stripe_keys.dart';
 import 'package:queme/provider/appLifeCycleProvider.dart';
 import 'package:queme/provider/eventProvider.dart';
+import 'package:queme/provider/paymentProvider.dart';
 import 'Screens/Auth/Splash_Screen.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey = StripeKey.testPublishKey;
+  await Stripe.instance.applySettings();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-  );
-  // OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
-  // OneSignal.initialize('9e0e893c-a777-4670-b0e6-8bfd077f7b46');
-  // OneSignal.Notifications.requestPermission(true);
-  // SendNotification().generateDeviceId();
-  await FirebaseAppCheck.instance.activate(
-    webProvider: ReCaptchaV3Provider('recaptcha-v3-site-key'),
-    androidProvider: AndroidProvider.playIntegrity,
   );
   runApp(const MyApp());
 }
@@ -38,38 +33,41 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => EventProvider()),
         ChangeNotifierProvider(create: (_) => AppLifeCycleProvider()),
         ChangeNotifierProvider(create: (_) => ProfileProvider()),
+        ChangeNotifierProvider(create: (_) => PaymentProvider()),
       ],
-      child: Consumer<AppLifeCycleProvider>(builder: (context, _, __) {
-        return ScreenUtilInit(
-          designSize: const Size(390, 844),
-          minTextAdapt: true,
-          splitScreenMode: true,
-          builder: (context, child) {
-            return GetMaterialApp(
-              theme: ThemeData(
-                colorScheme: const ColorScheme.light().copyWith(
-                  primary: Colors.red,
+      child: Consumer<AppLifeCycleProvider>(
+        builder: (context, _, __) {
+          return ScreenUtilInit(
+            designSize: const Size(390, 844),
+            minTextAdapt: true,
+            splitScreenMode: true,
+            builder: (context, child) {
+              return GetMaterialApp(
+                theme: ThemeData(
+                  colorScheme: const ColorScheme.light().copyWith(
+                    primary: Colors.red,
+                  ),
+                  appBarTheme: const AppBarTheme(scrolledUnderElevation: 0),
+                  scaffoldBackgroundColor: AppColors.whiteColor,
+                  fontFamily: 'Palanquin Dark',
+                  textTheme: const TextTheme(
+                    bodyLarge: TextStyle(fontSize: 18.0),
+                    bodyMedium: TextStyle(fontSize: 16.0),
+                    displayLarge: TextStyle(fontSize: 30.0),
+                    displayMedium: TextStyle(fontSize: 24.0),
+                  ),
+                  buttonTheme: const ButtonThemeData(
+                    buttonColor: Colors.red,
+                  ),
                 ),
-                appBarTheme: const AppBarTheme(scrolledUnderElevation: 0),
-                scaffoldBackgroundColor: AppColors.whiteColor,
-                fontFamily: 'Palanquin Dark',
-                textTheme: const TextTheme(
-                  bodyLarge: TextStyle(fontSize: 18.0),
-                  bodyMedium: TextStyle(fontSize: 16.0),
-                  displayLarge: TextStyle(fontSize: 30.0),
-                  displayMedium: TextStyle(fontSize: 24.0),
-                ),
-                buttonTheme: const ButtonThemeData(
-                  buttonColor: Colors.red,
-                ),
-              ),
-              debugShowCheckedModeBanner: false,
-              home: child,
-            );
-          },
-          child: const SplashScreen(),
-        );
-      }),
+                debugShowCheckedModeBanner: false,
+                home: child,
+              );
+            },
+            child: const SplashScreen(),
+          );
+        },
+      ),
     );
   }
 }

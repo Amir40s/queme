@@ -4,7 +4,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:queme/Screens/Notifications/notifications_screen.dart';
@@ -21,7 +20,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final DatabaseReference _database = FirebaseDatabase.instanceFor(
     app: Firebase.app(),
@@ -115,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: "Search Events",
-                      hintStyle: TextStyle(
+                      hintStyle: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         color: Colors.grey,
@@ -146,12 +145,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         stream: _database.child("Events").onValue,
                         builder: (context, snapshot) {
                           if (snapshot.hasData &&
-                              (snapshot.data! as DatabaseEvent)
+                              (snapshot.data!)
                                       .snapshot
                                       .value !=
                                   null) {
                             Map<dynamic, dynamic> data =
-                                (snapshot.data! as DatabaseEvent).snapshot.value
+                                (snapshot.data!).snapshot.value
                                     as Map<dynamic, dynamic>;
 
                             List<Map<String, dynamic>> loadedEvents =
@@ -199,7 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                             return ListView.builder(
                               shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
+                              physics: const NeverScrollableScrollPhysics(),
                               itemCount: filteredEvents.length,
                               itemBuilder: (ctx, index) {
                                 var event = filteredEvents[index];
@@ -302,7 +301,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                           } else if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return Center(child: CircularProgressIndicator());
+                            return const Center(child: CircularProgressIndicator());
                           } else {
                             return Padding(
                               padding: EdgeInsets.only(top: 30.h),
@@ -332,12 +331,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             .onValue,
                         builder: (context, snapshot) {
                           if (snapshot.hasData &&
-                              (snapshot.data! as DatabaseEvent)
+                              (snapshot.data!)
                                       .snapshot
                                       .value !=
                                   null) {
                             Map<dynamic, dynamic> data =
-                                (snapshot.data! as DatabaseEvent).snapshot.value
+                                (snapshot.data!).snapshot.value
                                     as Map<dynamic, dynamic>;
 
                             List<Map<String, dynamic>> loadedRuns = data.entries
@@ -354,7 +353,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                             return ListView.builder(
                               shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
+                              physics: const NeverScrollableScrollPhysics(),
                               itemCount: loadedRuns.length,
                               itemBuilder: (ctx, index) {
                                 var rune = loadedRuns[index];
@@ -446,7 +445,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                           } else if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return CircularProgressIndicator();
+                            return const CircularProgressIndicator();
                           } else {
                             return Padding(
                               padding: EdgeInsets.only(top: 30.h),
@@ -473,7 +472,7 @@ class _HomeScreenState extends State<HomeScreen> {
         SizedBox(width: 5.w),
         Text(
           text,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
         ),
       ],
     );

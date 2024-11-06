@@ -9,11 +9,9 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:queme/Screens/Host_Screens/Host_Dashboard/host_bottom_nav.dart';
 import 'package:queme/Widgets/colors.dart';
 import 'package:queme/Widgets/round_button.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart'; // Import ScreenUtil
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../Utils/Utils.dart';
 import '../../Widgets/round_button2.dart';
-import '../Host_Screens/Host_Dashboard/Host_Dashboard.dart';
-import '../Host_Screens/Payments_Screens/Payment_Plans_Screen.dart';
 import '../Partcipants_Screens/Participent_BottomNav.dart';
 import 'Forget_Password.dart';
 import 'Register_Screen.dart';
@@ -170,8 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (snapshot.exists) {
         Map<dynamic, dynamic> userData =
             snapshot.value as Map<dynamic, dynamic>;
-        String userType = userData['userType'] ?? 'Participant';
-        String paymentStatus = userData['paymentok'] ?? 'pending';
+        String plan = userData['plan'] ?? 'free';
         bool deleted = userData['deleted'] ?? false;
         if (deleted) {
           Utils.toastMessage(
@@ -179,19 +176,12 @@ class _LoginScreenState extends State<LoginScreen> {
           return;
         }
 
-        if (userType == 'Host' && paymentStatus == 'approved') {
+        if (plan == 'paid') {
           Utils.toastMessage("Login Successful", Colors.green);
-          Get.offAll(() => HostBottomNav());
-        } else if (userType == 'Participant') {
+          Get.offAll(() => const HostBottomNav());
+        } else if (plan == 'free') {
           Utils.toastMessage("Login Successful", Colors.green);
-          Get.offAll(() => ParticipentBottomNav());
-        } else {
-          Get.offAll(() => PaymentPlansScreen());
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content:
-                    Text('Payment not approved. Please complete the payment.')),
-          );
+          Get.offAll(() => const ParticipentBottomNav());
         }
       }
     } catch (e) {
@@ -370,34 +360,34 @@ class _LoginScreenState extends State<LoginScreen> {
                         MaterialPageRoute(
                             builder: (context) => const RegisterScreen())),
                   ),
-                  SizedBox(height: 20.h),
-                  SvgPicture.asset(
-                    'assets/images/cwith.svg',
-                    height: 60.h,
-                    width: 90.w,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      InkWell(
-                        onTap: _loginWithGoogle,
-                        child: SvgPicture.asset(
-                          'assets/images/google.svg',
-                          height: 48.h,
-                          width: 48.w,
-                        ),
-                      ),
-                      SizedBox(width: 10.w),
-                      InkWell(
-                          onTap: _loginWithFacebook,
-                          child: SvgPicture.asset(
-                            'assets/images/facebook.svg',
-                            height: 48.h,
-                            width: 48.w,
-                          )),
-                    ],
-                  ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 30.h),
+                  // SvgPicture.asset(
+                  //   'assets/images/cwith.svg',
+                  //   height: 60.h,
+                  //   width: 90.w,
+                  // ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     InkWell(
+                  //       onTap: _loginWithGoogle,
+                  //       child: SvgPicture.asset(
+                  //         'assets/images/google.svg',
+                  //         height: 48.h,
+                  //         width: 48.w,
+                  //       ),
+                  //     ),
+                  //     SizedBox(width: 10.w),
+                  //     InkWell(
+                  //         onTap: _loginWithFacebook,
+                  //         child: SvgPicture.asset(
+                  //           'assets/images/facebook.svg',
+                  //           height: 48.h,
+                  //           width: 48.w,
+                  //         )),
+                  //   ],
+                  // ),
+                  // SizedBox(height: 20.h),
                   InkWell(
                     onTap: () {
                       Navigator.pushReplacement(

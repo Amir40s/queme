@@ -2,14 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:queme/Screens/Host_Screens/Payments_Screens/Payment_Plans_Screen.dart';
 import 'package:queme/Utils/Utils.dart';
 
 class EventProvider with ChangeNotifier {
-  List<String> _followingEventIds = [];
+  final List<String> _followingEventIds = [];
   bool _isLoading = false;
-  List<String> _followingRunsIds = [];
+  final List<String> _followingRunsIds = [];
   String _token = '';
 
   List<String> get followingEventIds => _followingEventIds;

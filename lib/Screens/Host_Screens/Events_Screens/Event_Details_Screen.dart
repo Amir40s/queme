@@ -16,7 +16,7 @@ class EventDetailsScreen extends StatefulWidget {
   final String eventName;
   final String eventLocation;
   final String eventStartDate;
-  EventDetailsScreen({
+  const EventDetailsScreen({super.key, 
     required this.eventId,
     required this.eventName,
     required this.eventLocation,

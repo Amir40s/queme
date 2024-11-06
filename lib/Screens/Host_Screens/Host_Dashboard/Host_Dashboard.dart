@@ -25,7 +25,7 @@ class _HostDashboardState extends State<HostDashboard> {
     app: Firebase.app(),
     databaseURL: 'https://queme-f9d7f-default-rtdb.firebaseio.com/',
   ).ref();
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -127,7 +127,7 @@ class _HostDashboardState extends State<HostDashboard> {
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: "Search Events",
-                    hintStyle: TextStyle(
+                    hintStyle: const TextStyle(
                       fontSize: 12,
                       color: Colors.grey,
                       fontFamily: 'Poppins',
@@ -195,7 +195,7 @@ class _HostDashboardState extends State<HostDashboard> {
                                 return filteredEvents.isNotEmpty
                                     ? ListView.builder(
                                         shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
+                                        physics: const NeverScrollableScrollPhysics(),
                                         itemCount: filteredEvents.length,
                                         itemBuilder: (ctx, index) {
                                           var event = filteredEvents[index];
@@ -287,7 +287,7 @@ class _HostDashboardState extends State<HostDashboard> {
                                           );
                                         },
                                       )
-                                    : Padding(
+                                    : const Padding(
                                         padding: EdgeInsets.only(top: 15),
                                         child: Center(
                                             child: Text(
@@ -365,7 +365,7 @@ class _HostDashboardState extends State<HostDashboard> {
                                 return filteredEvents.isNotEmpty
                                     ? ListView.builder(
                                         shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
+                                        physics: const NeverScrollableScrollPhysics(),
                                         itemCount: filteredEvents.length,
                                         itemBuilder: (ctx, index) {
                                           var event = filteredEvents[index];
@@ -457,7 +457,7 @@ class _HostDashboardState extends State<HostDashboard> {
                                           );
                                         },
                                       )
-                                    : Padding(
+                                    : const Padding(
                                         padding: EdgeInsets.only(top: 15),
                                         child: Center(
                                             child: Text(

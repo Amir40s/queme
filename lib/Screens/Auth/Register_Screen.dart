@@ -4,6 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:get/get.dart';
+import 'package:queme/Screens/Host_Screens/Payments_Screens/Payment_Plans_Screen.dart';
+import 'package:queme/Screens/Partcipants_Screens/Participent_BottomNav.dart';
 import '../../Utils/Utils.dart';
 import '../../Widgets/colors.dart';
 import '../../Widgets/round_button.dart';
@@ -19,7 +22,7 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final ValueNotifier<bool> _obscurePassword = ValueNotifier<bool>(true);
-  String? _userType; // This will hold the selected user type
+  String _userType = 'Participant';
 
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -120,16 +123,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
             'name': nameController.text.trim(),
             'email': emailController.text.trim(),
             'createdAt': DateTime.now().toString(),
-            'password': passwordController.text
-                .trim(), // Optionally store password (hashing recommended)
-            'userType': _userType ??
-                "Participant", // Save the user type, default to "Participant" if not selected
+            'plan': 'free',
+            'password': passwordController.text.trim(),
+            'userType': _userType
           });
 
           // Navigate to login screen after successful registration
           Utils.toastMessage("Register Successfully", Colors.green);
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => const LoginScreen()));
+
+          _userType == 'Host'
+              ? Get.offAll(
+                  () => const PaymentPlansScreen(),
+                )
+              : Get.offAll(
+                  () => const ParticipentBottomNav(),
+                );
         }
       } on FirebaseAuthException catch (e) {
         Utils.toastMessage(e.toString(), Colors.red);
@@ -398,7 +406,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             groupValue: _userType,
                             onChanged: (String? value) {
                               setState(() {
-                                _userType = value;
+                                _userType = value!;
                               });
                             },
                           ),
@@ -421,7 +429,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             groupValue: _userType,
                             onChanged: (String? value) {
                               setState(() {
-                                _userType = value;
+                                _userType = value!;
                               });
                             },
                           ),

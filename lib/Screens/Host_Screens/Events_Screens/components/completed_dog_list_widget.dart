@@ -126,7 +126,7 @@ class CompletedDogWidget extends StatelessWidget {
                   ),
                 )
               : const SizedBox.shrink(),
-          Spacer(),
+          const Spacer(),
           isEdit
               ? PopupMenuButton(
                   position: PopupMenuPosition.under,
@@ -148,7 +148,7 @@ class CompletedDogWidget extends StatelessWidget {
                     changeDogStatus();
                   },
                 )
-              : SizedBox.shrink()
+              : const SizedBox.shrink()
         ],
       ),
     );

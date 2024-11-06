@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -109,7 +108,7 @@ class NotificationsScreen extends StatelessWidget {
                                   ),
                                   child: SvgPicture.asset(
                                     'assets/images/announcement.svg',
-                                    color: Color(0xffFF7900),
+                                    color: const Color(0xffFF7900),
                                   ),
                                 ),
                                 SizedBox(width: 10.w),
@@ -128,7 +127,7 @@ class NotificationsScreen extends StatelessWidget {
                                             Text(
                                               title,
                                               style: TextStyle(
-                                                color: Color(0xff240046),
+                                                color: const Color(0xff240046),
                                                 fontFamily: "Palanquin Dark",
                                                 fontSize: 18.h,
                                                 fontWeight: FontWeight.bold,
@@ -152,7 +151,7 @@ class NotificationsScreen extends StatelessWidget {
                                       Text(
                                         createdAt,
                                         style: TextStyle(
-                                          color: Color(0xffAAAFB6),
+                                          color: const Color(0xffAAAFB6),
                                           fontFamily: "Palanquin Dark",
                                           fontSize: 16.h,
                                           fontWeight: FontWeight.bold,
@@ -165,7 +164,7 @@ class NotificationsScreen extends StatelessWidget {
                             ),
                             Padding(
                               padding: EdgeInsets.symmetric(vertical: 8.h),
-                              child: Divider(
+                              child: const Divider(
                                 color: Color(0xffE5E5E5),
                               ),
                             )

@@ -456,7 +456,7 @@ class EventsScreen extends StatelessWidget {
                           if (snapshot.hasData &&
                               (snapshot.data!).snapshot.value != null) {
                             Map<dynamic, dynamic> data =
-                                (snapshot.data! as DatabaseEvent).snapshot.value
+                                (snapshot.data!).snapshot.value
                                     as Map<dynamic, dynamic>;
 
                             List<Map<String, dynamic>> loadedRuns = data.entries
@@ -591,7 +591,7 @@ class EventsScreen extends StatelessWidget {
         SizedBox(width: 5.w),
         Text(
           text,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
         ),
       ],
     );

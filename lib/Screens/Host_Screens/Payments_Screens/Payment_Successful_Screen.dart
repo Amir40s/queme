@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:queme/Screens/Auth/Login_Screen.dart';
-import 'package:queme/Screens/Host_Screens/Host_Dashboard/Host_Dashboard.dart';
 import 'package:queme/Screens/Host_Screens/Host_Dashboard/host_bottom_nav.dart';
 import 'package:queme/Widgets/round_button.dart';
 import 'package:queme/provider/eventProvider.dart';

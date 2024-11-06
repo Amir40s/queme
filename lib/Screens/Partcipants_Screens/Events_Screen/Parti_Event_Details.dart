@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-import 'package:queme/Utils/Utils.dart';
 import 'package:queme/Widgets/round_button.dart';
 import 'package:queme/provider/eventProvider.dart';
 import '../../../Widgets/colors.dart';
@@ -18,7 +17,7 @@ class PartiEventDetails extends StatefulWidget {
   final String eventLocation;
   final String eventStartDate;
 
-  const PartiEventDetails({
+  const PartiEventDetails({super.key, 
     required this.eventId,
     required this.eventName,
     required this.eventLocation,
@@ -150,7 +149,7 @@ class _PartiEventDetailsState extends State<PartiEventDetails> {
                 runesList.isNotEmpty
                     ? ListView.builder(
                         shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: runesList.length,
                         itemBuilder: (context, index) {
                           final rune = runesList[index];

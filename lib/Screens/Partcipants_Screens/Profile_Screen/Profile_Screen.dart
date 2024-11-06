@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:queme/Screens/Host_Screens/Host_Dashboard/host_bottom_nav.dart';
@@ -36,7 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController _emailController = TextEditingController();
   String _profileImageUrl = 'assets/images/women1.png'; // Default profile image
   String _userType = 'Participant'; // Default profile image
-  String paymentOk = ''; // Default profile image
+  String plan = ''; // Default profile image
   bool _isLoading = false;
   List<Map<String, String>> _dogsList = [];
   List<Map<String, dynamic>> _followingEvents = []; // To store followed events
@@ -180,7 +181,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _nameController.text = data['name'] ?? '';
           _emailController.text = data['email'] ?? '';
           _userType = data['userType'] ?? '';
-          paymentOk = data['paymentok'] ?? '';
+          plan = data['plan'] ?? '';
           _profileImageUrl = data['profileImageUrl'] ?? _profileImageUrl;
         });
 
@@ -376,7 +377,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         else
                           currentImageUrl != ''
                               ? Image.network(currentImageUrl, height: 100)
-                              : SizedBox.shrink()
+                              : const SizedBox.shrink()
                       ],
                     ),
               actions: isLoading
@@ -789,31 +790,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _userType == 'Participant'
                   ? SizedBox(height: 20.h)
                   : const SizedBox.shrink(),
-              _userType == 'Participant'
-                  ? RoundButton(
-                      title: paymentOk == 'approved'
-                          ? "Go to Hosting"
-                          : "Upgrade To Host",
-                      onPress: () {
-                        Provider.of<EventProvider>(context, listen: false)
-                            .changeUserType(_userType == 'Participant'
-                                ? 'Host'
-                                : 'Participant');
-
-                        paymentOk == 'approved'
-                            ? Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const HostBottomNav()),
-                              )
-                            : Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const PaymentPlansScreen()),
-                              );
-                      },
-                    )
-                  : const SizedBox.shrink(),
+              _userType == 'Host'
+                  ? const SizedBox.shrink()
+                  : Padding(
+                      padding: EdgeInsets.only(top: 20.h),
+                      child: RoundButton(
+                        title:
+                            plan == 'free' ? "Upgrade To Host" : "Back to host",
+                        onPress: plan == 'free'
+                            ? () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const PaymentPlansScreen()),
+                                );
+                              }
+                            : () {
+                                Get.offAll(() => const HostBottomNav());
+                              },
+                      ),
+                    ),
               SizedBox(height: 20.h),
               Align(
                 alignment: Alignment.centerLeft,

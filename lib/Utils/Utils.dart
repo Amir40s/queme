@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
@@ -72,5 +74,31 @@ class Utils {
       log('Error uploading file to Cloudinary: $e');
       return '';
     }
+  }
+}
+
+Future<Map<String, dynamic>?> getCurrentUserData() async {
+  final DatabaseReference dbRef = FirebaseDatabase.instance.ref();
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  try {
+    final User? user = auth.currentUser;
+    if (user == null) {
+      print("No user is currently logged in.");
+      return null;
+    }
+
+    final DataSnapshot snapshot =
+        await dbRef.child('Users').child(user.uid).get();
+
+    if (snapshot.exists) {
+      final userData = Map<String, dynamic>.from(snapshot.value as Map);
+      return userData;
+    } else {
+      print("User data not found.");
+      return null;
+    }
+  } catch (e) {
+    print("Error fetching user data: $e");
+    return null;
   }
 }

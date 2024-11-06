@@ -270,7 +270,7 @@ class _AddNewEventState extends State<AddNewEvent> {
             fontFamily: 'Palanquin Dark',
           ),
         ),
-        SizedBox(height: 5),
+        const SizedBox(height: 5),
         TextFormField(
           controller: controller,
           focusNode: focusNode,
@@ -284,7 +284,7 @@ class _AddNewEventState extends State<AddNewEvent> {
             // contentPadding: EdgeInsets.symmetric(
             //     vertical: size.height * 0.020, horizontal: 10),
             suffixIcon: Padding(
-              padding: EdgeInsets.only(right: 10),
+              padding: const EdgeInsets.only(right: 10),
               child: Icon(Icons.date_range, size: 24.h),
             ),
             border: const OutlineInputBorder(),

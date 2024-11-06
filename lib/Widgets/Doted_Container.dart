@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class DottedBorderContainer extends StatelessWidget {
   final double height;
@@ -9,7 +7,7 @@ class DottedBorderContainer extends StatelessWidget {
   final Color borderColor;
   final double strokeWidth;
 
-  DottedBorderContainer({
+  const DottedBorderContainer({super.key, 
     required this.height,
     required this.width,
     required this.child,
@@ -22,7 +20,7 @@ class DottedBorderContainer extends StatelessWidget {
     return CustomPaint(
       size: Size(width, height),
       painter: DottedBorderPainter(color: borderColor, strokeWidth: strokeWidth),
-      child: Container(
+      child: SizedBox(
         height: height,
         width: width,
         child: child,

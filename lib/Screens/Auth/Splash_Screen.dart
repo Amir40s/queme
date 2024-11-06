@@ -4,9 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:queme/Screens/Host_Screens/Host_Dashboard/host_bottom_nav.dart';
-import 'package:queme/Screens/Notifications/send_notification.dart';
 import 'package:queme/Utils/Utils.dart';
-import '../Host_Screens/Host_Dashboard/Host_Dashboard.dart';
 import 'Login_Screen.dart';
 import '../Partcipants_Screens/Participent_BottomNav.dart';
 
@@ -50,34 +48,25 @@ class _SplashScreenState extends State<SplashScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => LoginScreen(),
+              builder: (context) => const LoginScreen(),
             ),
           );
           Utils.toastMessage(
               'You account have been blocked by the admin.', Colors.red);
           return;
         }
-        bool isTrialExpired(String startDateString) {
-          if (startDateString.isEmpty) {
-            return false;
-          }
-          DateTime startDate = DateTime.parse(startDateString);
-          DateTime endDate = startDate.add(Duration(days: 7));
-          return DateTime.now().isAfter(endDate);
-        }
 
         String userType = userData['userType'] ?? 'Participant';
-        String paymentStatus = userData['paymentok'] ?? 'pending';
-        bool trialEnd = isTrialExpired(userData['freeTrialStart'] ?? "");
+        String plan = userData['plan'] ?? 'free';
 
-        if (userType == 'Host' && paymentStatus == 'approved' || !trialEnd) {
-          updateToken(currentUser.uid);
+        if (plan == 'paid') {
+          // updateToken(currentUser.uid);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const HostBottomNav()),
           );
-        } else if (userType == 'Participant') {
-          updateToken(currentUser.uid);
+        } else if (plan == 'free') {
+          // updateToken(currentUser.uid);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -103,13 +92,13 @@ class _SplashScreenState extends State<SplashScreen> {
     }
   }
 
-  void updateToken(String id) async {
-    final token = await SendNotification().generateDeviceId();
-
-    _database.child('Users').child(id).update({
-      'token': token.toString(),
-    });
-  }
+  // void updateToken(String id) async {
+  //   final token = await SendNotification().generateDeviceId();
+  //
+  //   _database.child('Users').child(id).update({
+  //     'token': token.toString(),
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {

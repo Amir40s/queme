@@ -31,7 +31,7 @@ class FollowButton extends StatelessWidget {
                 )
               : Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: AppColors.whiteColor,

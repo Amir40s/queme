@@ -21,7 +21,7 @@ class RunesButton extends StatelessWidget {
       onTap: onPress,
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 5.h),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppColors.buttonColor,
         ),
         width: 350.w,

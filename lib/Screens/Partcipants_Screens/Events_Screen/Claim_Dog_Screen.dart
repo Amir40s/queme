@@ -9,14 +9,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:queme/Utils/Utils.dart';
-import 'package:queme/Widgets/round_button.dart';
 import 'package:queme/Widgets/round_button2.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../Widgets/Doted_Container.dart';
 import '../../../Widgets/colors.dart';
 import '../../../Widgets/follow_button.dart';
-import '../../../Widgets/runes_button.dart';
 import 'Claim_Successfully.dart';
 
 class ClaimDogScreen extends StatefulWidget {
@@ -33,7 +31,7 @@ class ClaimDogScreen extends StatefulWidget {
 }
 
 class _ClaimDogScreenState extends State<ClaimDogScreen> {
-  bool _isLoading = false;
+  final bool _isLoading = false;
   List<Map<String, String>> _dogsList = [];
   TextEditingController dogNameController = TextEditingController();
   TextEditingController dogBreedController = TextEditingController();
