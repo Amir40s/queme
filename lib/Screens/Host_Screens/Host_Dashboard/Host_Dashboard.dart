@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:queme/Screens/Partcipants_Screens/Participent_BottomNav.dart';
+import '../../../Widgets/build_notification_icon.dart';
 import '../../../Widgets/round_button.dart';
 import '../../Auth/Login_Screen.dart';
 import '../../Notifications/notifications_screen.dart';
@@ -79,29 +80,7 @@ class _HostDashboardState extends State<HostDashboard> {
                   ),
                 ),
                 const Spacer(),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => NotificationsScreen()),
-                    );
-                  },
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.r),
-                    ),
-                    elevation: 3,
-                    child: Padding(
-                      padding: EdgeInsets.all(15.0.h),
-                      child: SvgPicture.asset(
-                        'assets/images/bell.svg',
-                        height: 20.h,
-                        width: 20.w,
-                      ),
-                    ),
-                  ),
-                ),
+                buildNotificationIcon(),
               ],
             ),
             SizedBox(height: 20.h),
@@ -195,7 +174,8 @@ class _HostDashboardState extends State<HostDashboard> {
                                 return filteredEvents.isNotEmpty
                                     ? ListView.builder(
                                         shrinkWrap: true,
-                                        physics: const NeverScrollableScrollPhysics(),
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
                                         itemCount: filteredEvents.length,
                                         itemBuilder: (ctx, index) {
                                           var event = filteredEvents[index];
@@ -365,7 +345,8 @@ class _HostDashboardState extends State<HostDashboard> {
                                 return filteredEvents.isNotEmpty
                                     ? ListView.builder(
                                         shrinkWrap: true,
-                                        physics: const NeverScrollableScrollPhysics(),
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
                                         itemCount: filteredEvents.length,
                                         itemBuilder: (ctx, index) {
                                           var event = filteredEvents[index];

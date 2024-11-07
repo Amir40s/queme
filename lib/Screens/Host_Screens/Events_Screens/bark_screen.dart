@@ -258,6 +258,7 @@ class _BarkScreenState extends State<BarkScreen> {
                               .child(newRef.key!)
                               .set({
                             'title': '${widget.runeName} Run',
+                            'read': false,
                             'body':
                                 '${widget.dogName} is ${msgController.text}',
                             'createdAt': DateTime.now().toString(),

@@ -31,10 +31,10 @@ class PaymentProvider with ChangeNotifier {
       // STEP 2: Initialize Payment Sheet
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
-          paymentIntentClientSecret:
-              paymentIntent!['client_secret'], // Gotten from payment intent
-          style: ThemeMode.light,
-        ),
+            paymentIntentClientSecret:
+                paymentIntent!['client_secret'], // Gotten from payment intent
+            style: ThemeMode.light,
+            merchantDisplayName: 'Queme'),
       );
 
       // STEP 3: Display Payment Sheet
@@ -120,7 +120,7 @@ class PaymentProvider with ChangeNotifier {
       await dbRef.child('Users').child(userId).update({
         'plan': 'paid',
         'planPurchasedDate': DateTime.now().toString(),
-        'planType': 'Yearly',
+        'planType': packageTitle,
         'planPrice': price,
         'userType': 'Host',
       });
@@ -132,6 +132,57 @@ class PaymentProvider with ChangeNotifier {
         'packageTitle': packageTitle,
         'createdAt': DateTime.now().toString(),
       });
+      await dbRef
+          .child('Admin')
+          .child('-O9u-jOTpJUADfHdUH30')
+          .child('Notifications')
+          .push()
+          .set({
+        'title': 'Package purchased',
+        'body': '${userData!['name']} purchased $packageTitle',
+        'createdAt': DateTime.now().toString(),
+      });
+      log("User payment info updated successfully");
+    } catch (e) {
+      log("Error updating payment info: $e");
+      throw Exception("Failed to update payment info");
+    }
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> updateFreeTrialPaymentInfo(String title) async {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    final DatabaseReference dbRef = FirebaseDatabase.instance.ref();
+    try {
+      isLoading = true;
+      final userData = await getCurrentUserData();
+      await dbRef.child('Users').child(userId).update({
+        'freeTrialStart': DateTime.now().toString(),
+        'plan': 'paid',
+        'planType': title,
+        'userType': 'Host',
+      });
+      await dbRef.child('Payments').push().set({
+        'userId': userId,
+        'amount': 0,
+        'image': userData?['profileImageUrl'] ?? '',
+        'name': userData?['name'] ?? '',
+        'packageTitle': 'Free Trial',
+        'createdAt': DateTime.now().toString(),
+      });
+      await dbRef
+          .child('Admin')
+          .child('-O9u-jOTpJUADfHdUH30')
+          .child('Notifications')
+          .push()
+          .set({
+        'title': 'Package purchased',
+        'body': '${userData!['name']} purchased Free Trial',
+        'createdAt': DateTime.now().toString(),
+      });
+
+      Get.offAll(() => const PaymentSuccessfulScreen());
       log("User payment info updated successfully");
     } catch (e) {
       log("Error updating payment info: $e");

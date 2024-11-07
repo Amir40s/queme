@@ -710,10 +710,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   IconButton(
                     icon:
                         const Icon(Icons.logout, color: AppColors.buttonColor),
-                    onPressed: _logout, // Logout button
+                    onPressed: _logout,
                   ),
-                  const Text("Logout",
-                      style: TextStyle(color: AppColors.buttonColor)),
+                  const Text(
+                    "Logout",
+                    style: TextStyle(color: AppColors.buttonColor),
+                  ),
                 ],
               ),
             ),
@@ -790,7 +792,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _userType == 'Participant'
                   ? SizedBox(height: 20.h)
                   : const SizedBox.shrink(),
-              _userType == 'Host'
+              plan == 'Paid'
                   ? const SizedBox.shrink()
                   : Padding(
                       padding: EdgeInsets.only(top: 20.h),

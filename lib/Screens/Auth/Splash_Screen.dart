@@ -37,6 +37,12 @@ class _SplashScreenState extends State<SplashScreen> {
           _database.child('Users').child(currentUser.uid);
       DataSnapshot snapshot = await userRef.get();
 
+      bool isDateInPast(String dateString) {
+        DateTime date = DateTime.parse(dateString);
+        DateTime currentDate = DateTime.now();
+        return date.isBefore(currentDate);
+      }
+
       if (snapshot.exists && snapshot.value != null) {
         Map<dynamic, dynamic> userData =
             snapshot.value as Map<dynamic, dynamic>;
@@ -52,21 +58,52 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           );
           Utils.toastMessage(
-              'You account have been blocked by the admin.', Colors.red);
+              'Your account has been blocked by the admin.', Colors.red);
           return;
         }
 
         String userType = userData['userType'] ?? 'Participant';
         String plan = userData['plan'] ?? 'free';
 
+        bool isFreeTrialActive(String trialStartDate) {
+          DateTime trialStart = DateTime.parse(trialStartDate);
+          DateTime trialEnd = trialStart.add(Duration(days: 7));
+          return DateTime.now().isBefore(trialEnd);
+        }
+
+        bool isFreeTrial = userData['freeTrialStart'] != null
+            ? isFreeTrialActive(userData['freeTrialStart'])
+            : false;
+        bool dateInPast = userData['hostingEnd'] != null
+            ? isDateInPast(userData['hostingEnd'])
+            : true;
+
+        // Check if free trial has ended or hosting end date is in the past
+        if ((plan == 'paid') && (dateInPast || !isFreeTrial)) {
+          // Update the user's plan to "free" in Firebase
+          await userRef.update({'plan': 'free'});
+          plan = 'free'; // Update the local variable to reflect the change
+        }
+
         if (plan == 'paid') {
-          // updateToken(currentUser.uid);
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const HostBottomNav()),
-          );
+          if (!dateInPast) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HostBottomNav()),
+            );
+          } else if (!isFreeTrial) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const ParticipentBottomNav()),
+            );
+          } else {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HostBottomNav()),
+            );
+          }
         } else if (plan == 'free') {
-          // updateToken(currentUser.uid);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -113,4 +150,11 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
     );
   }
+}
+
+bool isFreeTrialActive(String trialEndDateString) {
+  DateTime trialEndDate = DateTime.parse(trialEndDateString);
+  DateTime currentDate = DateTime.now();
+
+  return currentDate.isBefore(trialEndDate);
 }

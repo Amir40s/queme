@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:queme/Screens/Notifications/notifications_screen.dart';
+import 'package:queme/Widgets/build_notification_icon.dart';
 import 'package:queme/Widgets/follow_button.dart';
 import 'package:queme/provider/eventProvider.dart';
 import '../Events_Screen/Parti_Event_Details.dart';
@@ -64,31 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const Spacer(),
-                  GestureDetector(
-                    onTap: () {
-                      // SendNotification()
-                      //     .sendNotification('Hello There my name is fahad');
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => NotificationsScreen()),
-                      );
-                    },
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      elevation: 3,
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: SvgPicture.asset(
-                          'assets/images/bell.svg',
-                          height: 20,
-                          width: 20,
-                        ),
-                      ),
-                    ),
-                  ),
+                  buildNotificationIcon(),
                 ],
               ),
               const SizedBox(height: 20),
@@ -145,13 +122,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         stream: _database.child("Events").onValue,
                         builder: (context, snapshot) {
                           if (snapshot.hasData &&
-                              (snapshot.data!)
-                                      .snapshot
-                                      .value !=
-                                  null) {
-                            Map<dynamic, dynamic> data =
-                                (snapshot.data!).snapshot.value
-                                    as Map<dynamic, dynamic>;
+                              (snapshot.data!).snapshot.value != null) {
+                            Map<dynamic, dynamic> data = (snapshot.data!)
+                                .snapshot
+                                .value as Map<dynamic, dynamic>;
 
                             List<Map<String, dynamic>> loadedEvents =
                                 data.entries
@@ -301,7 +275,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                           } else if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return const Center(child: CircularProgressIndicator());
+                            return const Center(
+                                child: CircularProgressIndicator());
                           } else {
                             return Padding(
                               padding: EdgeInsets.only(top: 30.h),
@@ -331,13 +306,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             .onValue,
                         builder: (context, snapshot) {
                           if (snapshot.hasData &&
-                              (snapshot.data!)
-                                      .snapshot
-                                      .value !=
-                                  null) {
-                            Map<dynamic, dynamic> data =
-                                (snapshot.data!).snapshot.value
-                                    as Map<dynamic, dynamic>;
+                              (snapshot.data!).snapshot.value != null) {
+                            Map<dynamic, dynamic> data = (snapshot.data!)
+                                .snapshot
+                                .value as Map<dynamic, dynamic>;
 
                             List<Map<String, dynamic>> loadedRuns = data.entries
                                 .map((entry) => {

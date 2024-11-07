@@ -3,11 +3,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
-import 'package:queme/Screens/Host_Screens/Host_Dashboard/host_bottom_nav.dart';
+import 'package:queme/Screens/Auth/Splash_Screen.dart';
 import 'package:queme/Utils/Utils.dart';
 import 'package:queme/Widgets/round_button.dart';
-import 'package:queme/provider/eventProvider.dart';
 import '../../../Widgets/colors.dart';
 import 'Purchase_Plan_Screen.dart';
 
@@ -19,6 +17,7 @@ class PaymentPlansScreen extends StatefulWidget {
 }
 
 class _PaymentPlansScreenState extends State<PaymentPlansScreen> {
+  Map<String, dynamic> userData = {};
   final DatabaseReference _databaseRef = FirebaseDatabase.instance.ref();
   void _navigateToPurchasePlan(PackageModel package) {
     Navigator.push(
@@ -31,12 +30,25 @@ class _PaymentPlansScreenState extends State<PaymentPlansScreen> {
     );
   }
 
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
+  void getData() async {
+    userData = await getCurrentUserData() ?? {};
+  }
+
   final DatabaseReference _database = FirebaseDatabase.instanceFor(
           app: Firebase.app(),
           databaseURL: 'https://queme-f9d7f-default-rtdb.firebaseio.com/')
       .ref();
   @override
   Widget build(BuildContext context) {
+    bool isFreeTrial = userData['freeTrialStart'] != null
+        ? isFreeTrialActive(userData['freeTrialStart'])
+        : false;
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -131,53 +143,27 @@ class _PaymentPlansScreenState extends State<PaymentPlansScreen> {
                                       Padding(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 15),
-                                        child: RoundButton(
-                                          title: "Select Plan",
-                                          onPress: () async {
-                                            final currentUser = FirebaseAuth
-                                                .instance.currentUser;
-                                            if (package.price == "Free") {
-                                              _database
-                                                  .child('Users')
-                                                  .child(currentUser!.uid)
-                                                  .update({
-                                                'freeTrial': 'true',
-                                                'freeTrialStart':
-                                                    DateTime.now().toString(),
-                                              });
-                                              final data = await Provider.of<
-                                                          EventProvider>(
-                                                      context,
-                                                      listen: false)
-                                                  .getCurrentUserData();
-                                              Provider.of<EventProvider>(
-                                                      context,
-                                                      listen: false)
-                                                  .addPayment(
-                                                      package,
-                                                      data['name'],
-                                                      data['profileImageUrl'] ??
-                                                          '');
-
-                                              Utils.toastMessage(
-                                                  'Free trial started',
-                                                  Colors.green);
-                                              Provider.of<EventProvider>(
-                                                      context,
-                                                      listen: false)
-                                                  .changeUserType('Host');
-                                              Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const HostBottomNav(),
-                                                ),
-                                              );
-                                              return;
-                                            }
-                                            _navigateToPurchasePlan(package);
-                                          },
-                                        ),
+                                        child: !isFreeTrial &&
+                                                userData['planType'] ==
+                                                    package.title
+                                            ? RoundButton(
+                                                title: 'Already Purchased',
+                                                onPress: () async {},
+                                              )
+                                            : RoundButton(
+                                                title: userData['planType'] ==
+                                                        package.title
+                                                    ? "Purchased"
+                                                    : "Select Plan",
+                                                onPress: () async {
+                                                  if (userData['planType'] ==
+                                                      package.title) {
+                                                    return;
+                                                  }
+                                                  _navigateToPurchasePlan(
+                                                      package);
+                                                },
+                                              ),
                                       ),
                                     ],
                                   ),

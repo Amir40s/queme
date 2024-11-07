@@ -130,8 +130,11 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
                       : RoundButton(
                           title: "Confirm Purchase",
                           onPress: () {
-                            provider.makePayment(context, widget.package.price,
-                                widget.package.title);
+                            widget.package.price == '0'
+                                ? provider.updateFreeTrialPaymentInfo(
+                                    widget.package.title)
+                                : provider.makePayment(context,
+                                    widget.package.price, widget.package.title);
                           },
                         );
                 },
@@ -157,68 +160,74 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(widget.package.title,
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontFamily: "Poppins",
-                      fontSize: 24.sp)),
+              Text(
+                widget.package.title,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontFamily: "Poppins",
+                    fontSize: 24.sp),
+              ),
               SizedBox(height: 10.h),
-              Text(widget.package.description,
-                  style: TextStyle(
-                      fontFamily: "Poppins",
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold)),
-              SizedBox(height: 10.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Registration Fee",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "Poppins",
-                          fontSize: 16.sp)),
-                  Text("\$${widget.package.price}",
-                      style: TextStyle(
-                          fontFamily: "Poppins",
-                          fontSize: 16.sp,
-                          color: AppColors.buttonColor,
-                          fontWeight: FontWeight.bold)),
-                ],
+              Text(
+                widget.package.description,
+                style: TextStyle(
+                    fontFamily: "Poppins",
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Service Fee",
+                  Text("Total Fee",
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontFamily: "Poppins",
                           fontSize: 16.sp)),
-                  Text("\$20",
-                      style: TextStyle(
-                          fontFamily: "Poppins",
-                          fontSize: 16.sp,
-                          color: AppColors.buttonColor,
-                          fontWeight: FontWeight.bold)),
+                  Text(
+                    "\$${widget.package.price}",
+                    style: TextStyle(
+                        fontFamily: "Poppins",
+                        fontSize: 16.sp,
+                        color: AppColors.buttonColor,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ],
               ),
               SizedBox(height: 10.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Discount",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "Poppins",
-                          fontSize: 16.sp)),
-                  Text("\$10",
-                      style: TextStyle(
-                          fontFamily: "Poppins",
-                          fontSize: 16.sp,
-                          color: AppColors.buttonColor,
-                          fontWeight: FontWeight.bold)),
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     Text("Service Fee",
+              //         style: TextStyle(
+              //             fontWeight: FontWeight.bold,
+              //             fontFamily: "Poppins",
+              //             fontSize: 16.sp)),
+              //     Text("\$20",
+              //         style: TextStyle(
+              //             fontFamily: "Poppins",
+              //             fontSize: 16.sp,
+              //             color: AppColors.buttonColor,
+              //             fontWeight: FontWeight.bold)),
+              //   ],
+              // ),
+              // SizedBox(height: 10.h),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     Text("Discount",
+              //         style: TextStyle(
+              //             fontWeight: FontWeight.bold,
+              //             fontFamily: "Poppins",
+              //             fontSize: 16.sp)),
+              //     Text("\$10",
+              //         style: TextStyle(
+              //             fontFamily: "Poppins",
+              //             fontSize: 16.sp,
+              //             color: AppColors.buttonColor,
+              //             fontWeight: FontWeight.bold)),
+              //   ],
+              // ),
             ],
           ),
         ),

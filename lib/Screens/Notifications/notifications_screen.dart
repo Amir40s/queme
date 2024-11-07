@@ -5,10 +5,45 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:queme/Utils/Utils.dart';
 
-class NotificationsScreen extends StatelessWidget {
+class NotificationsScreen extends StatefulWidget {
   NotificationsScreen({super.key});
 
+  @override
+  State<NotificationsScreen> createState() => _NotificationsScreenState();
+}
+
+class _NotificationsScreenState extends State<NotificationsScreen> {
   final auth = FirebaseAuth.instance.currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    markNotificationsAsRead();
+  }
+
+  void markNotificationsAsRead() {
+    FirebaseDatabase.instance
+        .ref('Users/${auth!.uid}/Notifications')
+        .orderByChild('read')
+        .equalTo(false)
+        .once()
+        .then(
+      (DatabaseEvent event) {
+        final snapshot = event.snapshot;
+
+        if (snapshot.value != null) {
+          Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
+          data.forEach(
+            (key, value) {
+              FirebaseDatabase.instance
+                  .ref('Users/${auth!.uid}/Notifications/$key')
+                  .update({'read': true});
+            },
+          );
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

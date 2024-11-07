@@ -16,7 +16,8 @@ class EventDetailsScreen extends StatefulWidget {
   final String eventName;
   final String eventLocation;
   final String eventStartDate;
-  const EventDetailsScreen({super.key, 
+  const EventDetailsScreen({
+    super.key,
     required this.eventId,
     required this.eventName,
     required this.eventLocation,
@@ -103,6 +104,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                           .set({
                         'title': '${widget.eventName} Event',
                         'body': notificationC.text.toString(),
+                        'read': false,
                         'createdAt': DateTime.now().toString(),
                       });
                     }
