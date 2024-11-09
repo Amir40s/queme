@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:queme/Screens/Notifications/services/fcm_service.dart';
 import '../../../Utils/Utils.dart';
 import 'Create_Runes_Screen.dart';
 import 'Host_Runs_Screen.dart';
@@ -107,6 +108,10 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         'read': false,
                         'createdAt': DateTime.now().toString(),
                       });
+                      FCMService().sendNotification(
+                          e['token']!,
+                          '${widget.eventName} Event',
+                          notificationC.text.toString());
                     }
 
                     Navigator.of(context).pop();

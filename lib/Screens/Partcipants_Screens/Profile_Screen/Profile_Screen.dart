@@ -792,7 +792,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _userType == 'Participant'
                   ? SizedBox(height: 20.h)
                   : const SizedBox.shrink(),
-              plan == 'Paid'
+              plan == 'paid'
                   ? const SizedBox.shrink()
                   : Padding(
                       padding: EdgeInsets.only(top: 20.h),

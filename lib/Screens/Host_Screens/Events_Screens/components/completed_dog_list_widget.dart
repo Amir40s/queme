@@ -26,7 +26,7 @@ class CompletedDogListWidget extends StatelessWidget {
         children: list.asMap().entries.map(
           (e) {
             final name = e.value['dogName'];
-            final img = e.value['imgUrl'];
+            final img = e.value['imageUrl'] ?? '';
             final owner = e.value['ownerName'];
             final dogId = e.value['id'];
             return CompletedDogWidget(

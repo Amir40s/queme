@@ -37,7 +37,7 @@ class _RuneDetailScreenState extends State<RuneDetailScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final List<Map<String, String>> _dogsList = [];
-
+  List<String> claimedDogs = [];
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final DatabaseReference _database = FirebaseDatabase.instanceFor(
     app: Firebase.app(),
@@ -48,7 +48,19 @@ class _RuneDetailScreenState extends State<RuneDetailScreen>
   @override
   void initState() {
     super.initState();
+    fetchClaimedDogs();
     _tabController = TabController(length: 2, vsync: this);
+  }
+
+  fetchClaimedDogs() async {
+    final ref = await _database.child('ClaimedDogs').get();
+    if (ref.exists) {
+      final data = ref.value as Map<dynamic, dynamic>;
+      data.forEach((key, value) {
+        claimedDogs.add(value['competitorName']);
+      });
+      setState(() {});
+    }
   }
 
   @override
@@ -231,7 +243,7 @@ class _RuneDetailScreenState extends State<RuneDetailScreen>
                                                         children: [
                                                           dog['ownerName'] != ''
                                                               ? Text(
-                                                                  dog['ownerName'],
+                                                                  'owner : ${dog['ownerName']}',
                                                                   style:
                                                                       TextStyle(
                                                                     fontFamily:
@@ -259,7 +271,8 @@ class _RuneDetailScreenState extends State<RuneDetailScreen>
                                                                         .bold,
                                                               ),
                                                             )
-                                                          : const SizedBox.shrink(),
+                                                          : const SizedBox
+                                                              .shrink(),
                                                       dog['competitorName'] !=
                                                               ''
                                                           ? Text(
@@ -273,14 +286,23 @@ class _RuneDetailScreenState extends State<RuneDetailScreen>
                                                                         .bold,
                                                               ),
                                                             )
-                                                          : const SizedBox.shrink()
+                                                          : const SizedBox
+                                                              .shrink()
                                                     ],
                                                   ),
                                                   ClamedButton(
-                                                    title: dog['claimed']
+                                                    title: dog['claimed'] ||
+                                                            claimedDogs
+                                                                .contains(
+                                                              dog['competitorName'],
+                                                            )
                                                         ? 'Claimed'
                                                         : "Claim",
-                                                    bgColor: dog['claimed']
+                                                    bgColor: dog['claimed'] ||
+                                                            claimedDogs
+                                                                .contains(
+                                                              dog['competitorName'],
+                                                            )
                                                         ? Colors.grey
                                                         : AppColors.buttonColor,
                                                     textColor:
@@ -297,6 +319,11 @@ class _RuneDetailScreenState extends State<RuneDetailScreen>
                                                               runeId:
                                                                   widget.runeId,
                                                               dogId: dog['id'],
+                                                              dogName: dog[
+                                                                  'dogName'],
+                                                              competitorNo:
+                                                                  dog['competitorName'] ??
+                                                                      '',
                                                             ),
                                                           ),
                                                         );
@@ -385,8 +412,7 @@ class _RuneDetailScreenState extends State<RuneDetailScreen>
                                               dog['competitorName'],
                                           'dogName': dog['dogName'],
                                           'ownerName': dog['ownerName'],
-                                          'imgUrl': dog['imgUrl'] ??
-                                              '', // Handle missing image URLs
+                                          'imageUrl': dog['imageUrl'] ?? '',
                                           'claimed': dog['claimed'] ?? false,
                                           'completed':
                                               dog['completed'] ?? false,

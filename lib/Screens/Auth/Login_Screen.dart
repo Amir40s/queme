@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_svg/svg.dart';
@@ -166,6 +167,10 @@ class _LoginScreenState extends State<LoginScreen> {
       DataSnapshot snapshot = await userRef.get();
 
       if (snapshot.exists) {
+        final token = await FirebaseMessaging.instance.getToken();
+        _database.child('Users').child(snapshot.key!).update({
+          'token': token.toString(),
+        });
         Map<dynamic, dynamic> userData =
             snapshot.value as Map<dynamic, dynamic>;
         String plan = userData['plan'] ?? 'free';

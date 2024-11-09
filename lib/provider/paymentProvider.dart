@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:convert';
 import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,8 +15,8 @@ class PaymentProvider with ChangeNotifier {
   bool isPaymentSuccessful = false; // Variable to track payment success
   bool isLoading = false;
 
-  void makePayment(
-      BuildContext context, String price, String packageTitle) async {
+  void makePayment(BuildContext context, String price, String packageTitle,
+      String eventCount) async {
     try {
       // STEP 1: Create Payment Intent
       paymentIntent = await createPaymentIntent(
@@ -41,7 +39,7 @@ class PaymentProvider with ChangeNotifier {
       final isSuccess = await displayPaymentSheet(context);
       if (isSuccess) {
         isPaymentSuccessful = true;
-        await updateUserPaymentInfo(price, packageTitle);
+        await updateUserPaymentInfo(price, packageTitle, eventCount);
         Get.offAll(() => const PaymentSuccessfulScreen());
       } else {
         isPaymentSuccessful = false;
@@ -111,7 +109,8 @@ class PaymentProvider with ChangeNotifier {
     }
   }
 
-  Future<void> updateUserPaymentInfo(String price, String packageTitle) async {
+  Future<void> updateUserPaymentInfo(
+      String price, String packageTitle, String eventCount) async {
     final userId = FirebaseAuth.instance.currentUser!.uid;
     final DatabaseReference dbRef = FirebaseDatabase.instance.ref();
     try {
@@ -119,9 +118,9 @@ class PaymentProvider with ChangeNotifier {
       final userData = await getCurrentUserData();
       await dbRef.child('Users').child(userId).update({
         'plan': 'paid',
-        'planPurchasedDate': DateTime.now().toString(),
+        'planEndDate': calculateFutureDate(frequency: packageTitle).toString(),
         'planType': packageTitle,
-        'planPrice': price,
+        'eventCount': eventCount,
         'userType': 'Host',
       });
       await dbRef.child('Payments').push().set({
@@ -151,16 +150,19 @@ class PaymentProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateFreeTrialPaymentInfo(String title) async {
+  Future<void> updateFreeTrialPaymentInfo(
+      String title, String eventCount) async {
     final userId = FirebaseAuth.instance.currentUser!.uid;
     final DatabaseReference dbRef = FirebaseDatabase.instance.ref();
     try {
       isLoading = true;
       final userData = await getCurrentUserData();
       await dbRef.child('Users').child(userId).update({
-        'freeTrialStart': DateTime.now().toString(),
+        'planEndDate': calculateFutureDate(frequency: title).toString(),
+        'freeTrialUsed': true,
         'plan': 'paid',
         'planType': title,
+        'eventCount': eventCount,
         'userType': 'Host',
       });
       await dbRef.child('Payments').push().set({

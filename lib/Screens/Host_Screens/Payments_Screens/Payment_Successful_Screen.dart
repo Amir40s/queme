@@ -34,7 +34,7 @@ class _PaymentSuccessfulScreenState extends State<PaymentSuccessfulScreen> {
                 ),
                 SizedBox(height: 20.h),
                 Text(
-                  "Payment Successful",
+                  "Successfully Purchased",
                   style: TextStyle(
                     fontSize: 24.sp,
                     fontFamily: "Poppins",

@@ -10,6 +10,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:queme/Screens/Host_Screens/Events_Screens/components/completed_dog_list_widget.dart';
 import 'package:queme/Screens/Host_Screens/Events_Screens/components/running_dog_list_widget.dart';
+import 'package:queme/Screens/Notifications/services/fcm_service.dart';
 import 'package:queme/Utils/Utils.dart';
 import 'package:queme/Widgets/colors.dart';
 import '../../../Widgets/Excel_button.dart';
@@ -115,6 +116,10 @@ class _HostRunsScreenState extends State<HostRunsScreen>
                         'body': notificationC.text.toString(),
                         'createdAt': DateTime.now().toString(),
                       });
+                      FCMService().sendNotification(
+                          e['token']!,
+                          '${widget.runeName} Run',
+                          notificationC.text.toString());
                     }
 
                     Navigator.of(context).pop();
@@ -498,7 +503,7 @@ class _HostRunsScreenState extends State<HostRunsScreen>
                               'competitorName': dog['competitorName'],
                               'dogName': dog['dogName'],
                               'ownerName': dog['ownerName'],
-                              'imgUrl': dog['imgUrl'] ??
+                              'imageUrl': dog['imageUrl'] ??
                                   '', // Handle missing image URLs
                               'claimed': dog['claimed'] ?? false,
                               'completed': dog['completed'] ?? false,

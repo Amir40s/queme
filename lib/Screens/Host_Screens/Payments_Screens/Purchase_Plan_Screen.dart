@@ -24,10 +24,6 @@ class PurchasePlanScreen extends StatefulWidget {
 }
 
 class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
-  String? _selectedPaymentMethod =
-      'Paypal'; // Initially selected payment method
-  String? userCardNumber; // Will store the masked card number
-
   // Firebase Database reference
   final DatabaseReference _database = FirebaseDatabase.instanceFor(
           app: Firebase.app(), // Make sure Firebase is initialized
@@ -37,23 +33,6 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
   @override
   void initState() {
     super.initState();
-    _loadUserCardInfo();
-  }
-
-  Future<void> _loadUserCardInfo() async {
-    User? currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null) {
-      DatabaseReference userRef =
-          _database.child(currentUser.uid).child('cardInfo');
-      DataSnapshot snapshot = await userRef.get();
-
-      if (snapshot.exists) {
-        String savedCard = snapshot.value as String;
-        setState(() {
-          userCardNumber = savedCard;
-        });
-      }
-    }
   }
 
   @override
@@ -98,27 +77,7 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
                   ),
                 ],
               ),
-              // Plan Details Container
               _buildPlanDetails(),
-
-              // SizedBox(height: 20.h),
-              // Align(
-              //   alignment: Alignment.centerLeft,
-              //   child: Text("Payment Method",
-              //       style: TextStyle(
-              //           fontFamily: "Poppins",
-              //           fontSize: 20.sp,
-              //           fontWeight: FontWeight.w600)),
-              // ),
-              // SizedBox(height: 20.h),
-              // _buildPaymentMethods(),
-              //
-              // SizedBox(height: 20.h),
-              //
-              // // Display Add Card or Card Info
-              // userCardNumber == null
-              //     ? _buildAddCardContainer(widget.package)
-              //     : _buildCardInfo(widget.package),
 
               const Spacer(),
               Consumer<PaymentProvider>(
@@ -132,9 +91,14 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
                           onPress: () {
                             widget.package.price == '0'
                                 ? provider.updateFreeTrialPaymentInfo(
-                                    widget.package.title)
-                                : provider.makePayment(context,
-                                    widget.package.price, widget.package.title);
+                                    widget.package.renewal,
+                                    widget.package.eventsCount)
+                                : provider.makePayment(
+                                    context,
+                                    widget.package.price,
+                                    widget.package.renewal,
+                                    widget.package.eventsCount,
+                                  );
                           },
                         );
                 },
@@ -195,195 +159,10 @@ class _PurchasePlanScreenState extends State<PurchasePlanScreen> {
                 ],
               ),
               SizedBox(height: 10.h),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   children: [
-              //     Text("Service Fee",
-              //         style: TextStyle(
-              //             fontWeight: FontWeight.bold,
-              //             fontFamily: "Poppins",
-              //             fontSize: 16.sp)),
-              //     Text("\$20",
-              //         style: TextStyle(
-              //             fontFamily: "Poppins",
-              //             fontSize: 16.sp,
-              //             color: AppColors.buttonColor,
-              //             fontWeight: FontWeight.bold)),
-              //   ],
-              // ),
-              // SizedBox(height: 10.h),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   children: [
-              //     Text("Discount",
-              //         style: TextStyle(
-              //             fontWeight: FontWeight.bold,
-              //             fontFamily: "Poppins",
-              //             fontSize: 16.sp)),
-              //     Text("\$10",
-              //         style: TextStyle(
-              //             fontFamily: "Poppins",
-              //             fontSize: 16.sp,
-              //             color: AppColors.buttonColor,
-              //             fontWeight: FontWeight.bold)),
-              //   ],
-              // ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  // Build Add Card Container if No Card is Saved
-  Widget _buildAddCardContainer(PackageModel package) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(width: 2, color: AppColors.buttonColor),
-      ),
-      child: Column(
-        children: [
-          SizedBox(height: 10.h),
-          InkWell(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => PaymentInfoScreen(
-                            package: package,
-                          ))).then((value) {
-                if (value == true) {
-                  _loadUserCardInfo(); // Reload card info when returning from PaymentInfoScreen
-                }
-              });
-            },
-            child: SvgPicture.asset('assets/images/add.svg',
-                height: 45.h, width: 45.w),
-          ),
-          SizedBox(height: 10.h),
-          Text("Add Card",
-              style: TextStyle(
-                  fontFamily: "Poppins",
-                  color: AppColors.buttonColor,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold)),
-        ],
-      ),
-    );
-  }
-
-  // Display Masked Card Info and Edit Icon
-  Widget _buildCardInfo(PackageModel package) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text("Card: $userCardNumber",
-            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold)),
-        IconButton(
-          icon: const Icon(Icons.edit),
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => PaymentInfoScreen(
-                          package: package,
-                        ))).then((value) {
-              if (value == true) {
-                _loadUserCardInfo(); // Reload card info after editing
-              }
-            });
-          },
-        ),
-      ],
-    );
-  }
-
-  // Build Payment Methods
-  Widget _buildPaymentMethods() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _buildPaymentMethodOption('Paypal', 'assets/images/paypal.svg'),
-        _buildPaymentMethodOption('Stripe', 'assets/images/stripe.svg'),
-      ],
-    );
-  }
-
-  // Build a Single Payment Method Option
-  Widget _buildPaymentMethodOption(String method, String assetPath) {
-    return Container(
-      width: 162.w,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(width: 2.w, color: Colors.grey.shade300),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          InkWell(
-            onTap: () {
-              setState(() {
-                _selectedPaymentMethod = method;
-              });
-            },
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-              elevation: 3,
-              child: Padding(
-                padding: EdgeInsets.all(15.0.h),
-                child: SvgPicture.asset(assetPath, height: 18, width: 18),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 5.h,
-          ),
-          Text(method,
-              style: TextStyle(fontFamily: "Poppins", fontSize: 14.sp)),
-          Radio<String>(
-            value: method,
-            groupValue: _selectedPaymentMethod,
-            activeColor: Colors.red, // Active color set to red
-            onChanged: (String? value) {
-              setState(() {
-                _selectedPaymentMethod = value;
-              });
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Handle Purchase Confirmation and Save Data to Firebase
-  void _confirmPurchase() async {
-    User? currentUser = FirebaseAuth.instance.currentUser;
-
-    // Add log to see if button was clicked
-    print("Confirm Purchase button clicked");
-
-    if (currentUser != null) {
-      print("User is logged in, proceeding to save data");
-
-      // Save the selected payment method to Firebase
-      await _database.child('Users').child(currentUser.uid).update({
-        'paymentMethod': _selectedPaymentMethod,
-        'paymentok': 'approved',
-      });
-
-      print("Payment method saved to Firebase");
-
-      // Show success message
-      Utils.toastMessage("Payment Successful", Colors.green);
-    } else {
-      print("No user logged in");
-
-      // Show error if no user is logged in
-      Utils.toastMessage("No user logged in", Colors.red);
-    }
   }
 }

@@ -1,9 +1,12 @@
+import 'dart:developer';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:queme/Screens/Notifications/services/fcm_service.dart';
 import 'package:queme/Screens/Partcipants_Screens/Profile_Screen/Profile_Screen.dart';
 import 'package:queme/Widgets/colors.dart';
 import 'package:queme/config/stripe_keys.dart';
@@ -13,6 +16,14 @@ import 'package:queme/provider/paymentProvider.dart';
 import 'Screens/Auth/Splash_Screen.dart';
 import 'firebase_options.dart';
 
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  log("Handling background message: ${message.messageId}");
+  final fcmService = FCMService();
+  fcmService.handleMessage(message);
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Stripe.publishableKey = StripeKey.testPublishKey;
@@ -20,6 +31,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  final fcmService = FCMService();
+  await fcmService.initialize();
   runApp(const MyApp());
 }
 

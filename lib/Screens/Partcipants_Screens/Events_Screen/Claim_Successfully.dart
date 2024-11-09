@@ -3,14 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:queme/Widgets/round_button.dart';
 
-class ClaimSuccfullyScreen extends StatefulWidget {
-  const ClaimSuccfullyScreen({super.key});
+class ClaimSuccfullyScreen extends StatelessWidget {
+  const ClaimSuccfullyScreen({super.key, required this.dogName});
 
-  @override
-  State<ClaimSuccfullyScreen> createState() => _ClaimSuccfullyScreenState();
-}
+  final String dogName;
 
-class _ClaimSuccfullyScreenState extends State<ClaimSuccfullyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +36,7 @@ class _ClaimSuccfullyScreenState extends State<ClaimSuccfullyScreen> {
                 ),
                 SizedBox(height: 10.h),
                 Text(
-                  "You have successfully claimed Tommy. You \nwill now receive updates.",
+                  "You have successfully claimed $dogName.\n You will now receive updates.",
                   style: TextStyle(
                     fontFamily: "Palanquin",
                     fontSize: 16.sp,
@@ -53,7 +50,6 @@ class _ClaimSuccfullyScreenState extends State<ClaimSuccfullyScreen> {
                 RoundButton(
                   title: "Done",
                   onPress: () {
-                    Navigator.pop(context);
                     Navigator.pop(context);
                   },
                 ),

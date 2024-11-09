@@ -1,9 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:queme/Screens/Auth/Splash_Screen.dart';
 import 'package:queme/Utils/Utils.dart';
 import 'package:queme/Widgets/round_button.dart';
 import '../../../Widgets/colors.dart';
@@ -38,6 +36,7 @@ class _PaymentPlansScreenState extends State<PaymentPlansScreen> {
 
   void getData() async {
     userData = await getCurrentUserData() ?? {};
+    setState(() {});
   }
 
   final DatabaseReference _database = FirebaseDatabase.instanceFor(
@@ -46,9 +45,7 @@ class _PaymentPlansScreenState extends State<PaymentPlansScreen> {
       .ref();
   @override
   Widget build(BuildContext context) {
-    bool isFreeTrial = userData['freeTrialStart'] != null
-        ? isFreeTrialActive(userData['freeTrialStart'])
-        : false;
+    final isFreeTrialUsed = userData['freeTrialUsed'] ?? false;
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -83,76 +80,75 @@ class _PaymentPlansScreenState extends State<PaymentPlansScreen> {
                       return Column(
                         children: packages.map(
                           (package) {
-                            return Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10.h),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  color: Colors.grey.shade300,
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 25.h, vertical: 10.w),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        package.title,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: "Poppins",
-                                          fontSize: 24.sp,
-                                        ),
+                            return isFreeTrialUsed && package.renewal == 'Free'
+                                ? SizedBox.shrink()
+                                : Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 10.h),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(30),
+                                        color: Colors.grey.shade300,
                                       ),
-                                      SizedBox(height: 10.h),
-                                      Text(
-                                        package.description,
-                                        style: TextStyle(
-                                          fontFamily: "Poppins",
-                                          fontSize: 16.sp,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      SizedBox(height: 10.h),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "Event Amount",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontFamily: "Poppins",
-                                              fontSize: 16.sp,
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 25.h, vertical: 10.w),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              '${package.title} (${package.renewal})',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: "Poppins",
+                                                fontSize: 24.sp,
+                                              ),
                                             ),
-                                          ),
-                                          Text(
-                                            package.price == "Free"
-                                                ? 'Free'
-                                                : "\$${package.price}",
-                                            style: TextStyle(
-                                              fontFamily: "Poppins",
-                                              fontSize: 20.sp,
-                                              color: AppColors.buttonColor,
-                                              fontWeight: FontWeight.bold,
+                                            SizedBox(height: 10.h),
+                                            Text(
+                                              package.description,
+                                              style: TextStyle(
+                                                fontFamily: "Poppins",
+                                                fontSize: 16.sp,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 15),
-                                        child: !isFreeTrial &&
-                                                userData['planType'] ==
-                                                    package.title
-                                            ? RoundButton(
-                                                title: 'Already Purchased',
-                                                onPress: () async {},
-                                              )
-                                            : RoundButton(
+                                            SizedBox(height: 10.h),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  "Event Amount",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontFamily: "Poppins",
+                                                    fontSize: 16.sp,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  package.price == "Free"
+                                                      ? 'Free'
+                                                      : "\$${package.price}",
+                                                  style: TextStyle(
+                                                    fontFamily: "Poppins",
+                                                    fontSize: 20.sp,
+                                                    color:
+                                                        AppColors.buttonColor,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 15),
+                                              child: RoundButton(
                                                 title: userData['planType'] ==
-                                                        package.title
+                                                        package.renewal
                                                     ? "Purchased"
                                                     : "Select Plan",
                                                 onPress: () async {
@@ -164,12 +160,12 @@ class _PaymentPlansScreenState extends State<PaymentPlansScreen> {
                                                       package);
                                                 },
                                               ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
+                                    ),
+                                  );
                           },
                         ).toList(),
                       );
@@ -209,12 +205,16 @@ class PackageModel {
   final String title;
   final String description;
   final String price;
+  final String renewal;
+  final String eventsCount;
 
   PackageModel({
     required this.id,
     required this.title,
     required this.description,
     required this.price,
+    required this.eventsCount,
+    required this.renewal,
   });
 
   factory PackageModel.fromMap(String id, Map<String, dynamic> map) {
@@ -223,6 +223,8 @@ class PackageModel {
       title: map['title'] ?? '',
       description: map['description'] ?? '',
       price: map['price'] ?? '',
+      eventsCount: map['eventsCount'] ?? '',
+      renewal: map['renewal'] ?? '',
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:queme/Screens/Notifications/services/fcm_service.dart';
 import 'package:queme/Utils/Utils.dart';
 import 'package:queme/Widgets/colors.dart';
 import 'package:queme/Widgets/round_button.dart';
@@ -263,6 +264,10 @@ class _BarkScreenState extends State<BarkScreen> {
                                 '${widget.dogName} is ${msgController.text}',
                             'createdAt': DateTime.now().toString(),
                           });
+                          FCMService().sendNotification(
+                              e['token']!,
+                              '${widget.runeName} Run',
+                              '${widget.dogName} is ${msgController.text}');
                         }
 
                         Get.back();

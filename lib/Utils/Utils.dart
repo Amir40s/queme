@@ -102,3 +102,24 @@ Future<Map<String, dynamic>?> getCurrentUserData() async {
     return null;
   }
 }
+
+DateTime calculateFutureDate({required String frequency}) {
+  DateTime date = DateTime.now();
+
+  switch (frequency.toLowerCase()) {
+    case 'daily':
+      return date.add(Duration(days: 1));
+    case 'weekly':
+      return date.add(Duration(days: 7));
+    case 'monthly':
+      return DateTime(date.year, date.month + 1, date.day);
+    case 'yearly':
+      return DateTime(date.year + 1, date.month, date.day);
+    case 'one-time':
+      return date; // Returns the current date for one-time
+    case 'free':
+      return date.add(Duration(days: 7)); // Provides a 7-day trial
+    default:
+      throw ArgumentError('Invalid frequency: $frequency');
+  }
+}

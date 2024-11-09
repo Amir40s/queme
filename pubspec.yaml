@@ -57,6 +57,8 @@ dependencies:
   csv: ^6.0.0
   get: ^4.6.6
   flutter_stripe: ^11.2.0
+  flutter_local_notifications: ^18.0.0
+  googleapis_auth: ^1.6.0
 
 
 dev_dependencies:
@@ -85,6 +87,7 @@ flutter:
   assets:
     - assets/images/
     - assets/mycsv/
+    - android/app/messaging_services.json
 
   fonts:
     - family: Palanquin Dark

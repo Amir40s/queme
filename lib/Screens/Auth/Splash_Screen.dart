@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:queme/Screens/Host_Screens/Host_Dashboard/host_bottom_nav.dart';
 import 'package:queme/Utils/Utils.dart';
@@ -62,24 +63,18 @@ class _SplashScreenState extends State<SplashScreen> {
           return;
         }
 
-        String userType = userData['userType'] ?? 'Participant';
         String plan = userData['plan'] ?? 'free';
-
-        bool isFreeTrialActive(String trialStartDate) {
-          DateTime trialStart = DateTime.parse(trialStartDate);
-          DateTime trialEnd = trialStart.add(Duration(days: 7));
-          return DateTime.now().isBefore(trialEnd);
-        }
-
-        bool isFreeTrial = userData['freeTrialStart'] != null
-            ? isFreeTrialActive(userData['freeTrialStart'])
-            : false;
+        final date = DateTime.now();
+        bool isPlanEnd = userData['planEndDate'] != null
+            ? !date.isBefore(
+                DateTime.parse(userData['planEndDate']),
+              )
+            : true;
         bool dateInPast = userData['hostingEnd'] != null
             ? isDateInPast(userData['hostingEnd'])
-            : true;
-
-        // Check if free trial has ended or hosting end date is in the past
-        if ((plan == 'paid') && (dateInPast || !isFreeTrial)) {
+            : false;
+        updateToken(currentUser.uid);
+        if ((plan == 'paid') && (dateInPast || isPlanEnd)) {
           // Update the user's plan to "free" in Firebase
           await userRef.update({'plan': 'free'});
           plan = 'free'; // Update the local variable to reflect the change
@@ -90,12 +85,6 @@ class _SplashScreenState extends State<SplashScreen> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const HostBottomNav()),
-            );
-          } else if (!isFreeTrial) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const ParticipentBottomNav()),
             );
           } else {
             Navigator.pushReplacement(
@@ -129,13 +118,12 @@ class _SplashScreenState extends State<SplashScreen> {
     }
   }
 
-  // void updateToken(String id) async {
-  //   final token = await SendNotification().generateDeviceId();
-  //
-  //   _database.child('Users').child(id).update({
-  //     'token': token.toString(),
-  //   });
-  // }
+  void updateToken(String id) async {
+    final token = await FirebaseMessaging.instance.getToken();
+    _database.child('Users').child(id).update({
+      'token': token.toString(),
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

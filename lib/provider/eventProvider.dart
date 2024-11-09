@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:queme/Screens/Host_Screens/Payments_Screens/Payment_Plans_Screen.dart';
 import 'package:queme/Utils/Utils.dart';
@@ -102,7 +103,9 @@ class EventProvider with ChangeNotifier {
     try {
       _isLoading = true;
       User? currentUser = _auth.currentUser;
+
       if (currentUser != null) {
+        final token = await getToken(currentUser.uid);
         await _database
             .child("Users")
             .child(currentUser.uid)
@@ -120,7 +123,7 @@ class EventProvider with ChangeNotifier {
             .child('Followers')
             .child(currentUser.uid)
             .set({
-          'token': _token,
+          'token': token,
           'id': currentUser.uid,
         });
         _isLoading = false;
@@ -139,6 +142,7 @@ class EventProvider with ChangeNotifier {
       User? currentUser = _auth.currentUser;
       if (currentUser != null) {
         String userId = currentUser.uid;
+        final token = await getToken(currentUser.uid);
         String? userName = currentUser.displayName ?? currentUser.email;
 
         // Add rune to user's following list
@@ -164,14 +168,13 @@ class EventProvider with ChangeNotifier {
             .child('Followers')
             .child(userId) // Use the userId as the key
             .set({
-          'token': _token,
+          'token': token,
           'id': userId,
         });
 
         _followingRunsIds.add(runeId);
         notifyListeners();
-        Utils.toastMessage(
-            "You are now following rune $runeName", Colors.green);
+        Utils.toastMessage("You are now following run $runeName", Colors.green);
       }
     } on FirebaseException catch (e) {
       Utils.toastMessage("Error: ${e.message}", Colors.red);
@@ -263,5 +266,11 @@ class EventProvider with ChangeNotifier {
     Map<dynamic, dynamic> userData = snapshot.value as Map<dynamic, dynamic>;
 
     return userData;
+  }
+
+  Future<String?> getToken(String id) async {
+    final token = await FirebaseMessaging.instance.getToken();
+
+    return token;
   }
 }
