@@ -73,8 +73,10 @@ class _SplashScreenState extends State<SplashScreen> {
         bool dateInPast = userData['hostingEnd'] != null
             ? isDateInPast(userData['hostingEnd'])
             : false;
+        bool isEventEmpty =
+            int.parse(userData['eventCount']) <= 0 ? true : false;
         updateToken(currentUser.uid);
-        if ((plan == 'paid') && (dateInPast || isPlanEnd)) {
+        if ((plan == 'paid') && (dateInPast || isPlanEnd || isEventEmpty)) {
           // Update the user's plan to "free" in Firebase
           await userRef.update({'plan': 'free'});
           plan = 'free'; // Update the local variable to reflect the change

@@ -17,6 +17,7 @@ class AddNewEvent extends StatefulWidget {
 }
 
 class _AddNewEventState extends State<AddNewEvent> {
+  Map<String, dynamic> userData = {};
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
@@ -39,6 +40,11 @@ class _AddNewEventState extends State<AddNewEvent> {
     return null;
   }
 
+  void getData() async {
+    userData = await getCurrentUserData() ?? {};
+    setState(() {});
+  }
+
   Future<void> _selectDate(
       BuildContext context, TextEditingController controller) async {
     DateTime? picked = await showDatePicker(
@@ -56,18 +62,10 @@ class _AddNewEventState extends State<AddNewEvent> {
     }
   }
 
-  Future<void> _selectTime(
-      BuildContext context, TextEditingController controller) async {
-    TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-
-    if (picked != null) {
-      setState(() {
-        controller.text = picked.format(context);
-      });
-    }
+  @override
+  void initState() {
+    getData();
+    super.initState();
   }
 
   @override
@@ -172,11 +170,18 @@ class _AddNewEventState extends State<AddNewEvent> {
                               .child(eventId)
                               .set(eventData)
                               .then((_) {
+                            final eventCount =
+                                int.parse(userData['eventCount']) - 1;
+                            _database
+                                .child('Users')
+                                .child(currentUser.uid)
+                                .update(
+                              {'eventCount': eventCount.toString()},
+                            );
                             Utils.toastMessage(
                                 "Event created successfully", Colors.green);
                             Navigator.pop(context);
 
-                            // Optionally clear the form fields
                             nameController.clear();
                             locationController.clear();
                             startDateController.clear();

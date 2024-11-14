@@ -52,7 +52,7 @@ class FCMService {
 
     await _flutterLocalNotificationsPlugin.initialize(
       const InitializationSettings(
-        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+        android: AndroidInitializationSettings('@mipmap/launcher_icon'),
         iOS: DarwinInitializationSettings(),
       ),
       onDidReceiveNotificationResponse: _handleNotificationResponse,
@@ -106,7 +106,7 @@ class FCMService {
             _channel.id,
             _channel.name,
             channelDescription: _channel.description,
-            icon: android?.smallIcon ?? '@mipmap/ic_launcher',
+            icon: android?.smallIcon ?? '@mipmap/launcher_icon',
             importance: Importance.max,
             priority: Priority.high,
           ),

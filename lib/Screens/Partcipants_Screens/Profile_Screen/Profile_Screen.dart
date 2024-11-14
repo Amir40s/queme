@@ -792,26 +792,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _userType == 'Participant'
                   ? SizedBox(height: 20.h)
                   : const SizedBox.shrink(),
-              plan == 'paid'
-                  ? const SizedBox.shrink()
-                  : Padding(
-                      padding: EdgeInsets.only(top: 20.h),
-                      child: RoundButton(
-                        title:
-                            plan == 'free' ? "Upgrade To Host" : "Back to host",
-                        onPress: plan == 'free'
-                            ? () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const PaymentPlansScreen()),
-                                );
-                              }
-                            : () {
-                                Get.offAll(() => const HostBottomNav());
-                              },
-                      ),
-                    ),
+              Padding(
+                padding: EdgeInsets.only(top: 20.h),
+                child: RoundButton(
+                  title: plan == 'free' ? "Upgrade To Host" : "Back to host",
+                  onPress: plan == 'free'
+                      ? () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const PaymentPlansScreen()),
+                          );
+                        }
+                      : () {
+                          Get.offAll(() => const HostBottomNav());
+                        },
+                ),
+              ),
               SizedBox(height: 20.h),
               Align(
                 alignment: Alignment.centerLeft,
