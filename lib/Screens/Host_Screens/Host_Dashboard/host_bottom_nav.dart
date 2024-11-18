@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:queme/Screens/Host_Screens/Payments_Screens/admin_payment_plan_screen.dart';
 
 import '../../Partcipants_Screens/Profile_Screen/Profile_Screen.dart';
 import '../Payments_Screens/Payment_Plans_Screen.dart';
@@ -20,7 +21,7 @@ class _HostBottomNavState extends State<HostBottomNav> {
   // List of widgets to navigate between different tabs
   static final List<Widget> _screens = <Widget>[
     const HostDashboard(),
-    const PaymentPlansScreen(),
+    const AdminPaymentPlanScreen(),
     const ProfileScreen(),
   ];
 

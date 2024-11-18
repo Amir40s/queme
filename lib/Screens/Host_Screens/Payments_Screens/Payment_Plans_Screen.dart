@@ -84,102 +84,95 @@ class _PaymentPlansScreenState extends State<PaymentPlansScreen> {
                           (package) {
                             return isFreeTrialUsed && package.renewal == 'Free'
                                 ? const SizedBox.shrink()
-                                : package.renewal != userData['planType']
-                                    ? SizedBox.shrink()
-                                    : Padding(
+                                : Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 10.h),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(30),
+                                        color: Colors.grey.shade300,
+                                      ),
+                                      child: Padding(
                                         padding: EdgeInsets.symmetric(
-                                            vertical: 10.h),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(30),
-                                            color: Colors.grey.shade300,
-                                          ),
-                                          child: Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 25.h,
-                                                vertical: 10.w),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                            horizontal: 25.h, vertical: 10.w),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              '${package.title} (${package.renewal})',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: "Poppins",
+                                                fontSize: 24.sp,
+                                              ),
+                                            ),
+                                            SizedBox(height: 10.h),
+                                            Text(
+                                              package.description,
+                                              style: TextStyle(
+                                                fontFamily: "Poppins",
+                                                fontSize: 16.sp,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            SizedBox(height: 10.h),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 Text(
-                                                  '${package.title} (${package.renewal})',
+                                                  "Event Amount",
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.bold,
-                                                    fontFamily: "Poppins",
-                                                    fontSize: 24.sp,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 10.h),
-                                                Text(
-                                                  package.description,
-                                                  style: TextStyle(
                                                     fontFamily: "Poppins",
                                                     fontSize: 16.sp,
-                                                    fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
-                                                SizedBox(height: 10.h),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      "Event Amount",
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontFamily: "Poppins",
-                                                        fontSize: 16.sp,
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      package.price == "Free"
-                                                          ? 'Free'
-                                                          : "\$${package.price}",
-                                                      style: TextStyle(
-                                                        fontFamily: "Poppins",
-                                                        fontSize: 20.sp,
-                                                        color: AppColors
-                                                            .buttonColor,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(vertical: 15),
-                                                  child: RoundButton(
-                                                    title:
-                                                        userData['planType'] ==
-                                                                package.renewal
-                                                            ? "View"
-                                                            : "Select Plan",
-                                                    onPress: () async {
-                                                      if (userData[
-                                                              'planType'] ==
-                                                          package.renewal) {
-                                                        Get.bottomSheet(
-                                                          ViewMemberShip(
-                                                            userData: userData,
-                                                          ),
-                                                        );
-                                                        return;
-                                                      }
-                                                      _navigateToPurchasePlan(
-                                                          package);
-                                                    },
+                                                Text(
+                                                  package.price == "Free"
+                                                      ? 'Free'
+                                                      : "\$${package.price}",
+                                                  style: TextStyle(
+                                                    fontFamily: "Poppins",
+                                                    fontSize: 20.sp,
+                                                    color:
+                                                        AppColors.buttonColor,
+                                                    fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
                                               ],
                                             ),
-                                          ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 15),
+                                              child: RoundButton(
+                                                title: userData['planType'] ==
+                                                        package.renewal
+                                                    ? "View"
+                                                    : "Select Plan",
+                                                onPress: () async {
+                                                  if (userData['planType'] ==
+                                                      package.renewal) {
+                                                    Get.bottomSheet(
+                                                      ViewMemberShip(
+                                                        userData: userData,
+                                                      ),
+                                                    );
+                                                    return;
+                                                  }
+                                                  _navigateToPurchasePlan(
+                                                      package);
+                                                },
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      );
+                                      ),
+                                    ),
+                                  );
                           },
                         ).toList(),
                       );
